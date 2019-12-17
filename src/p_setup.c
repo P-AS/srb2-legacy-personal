@@ -2971,7 +2971,7 @@ boolean P_SetupLevel(boolean skipprecip, boolean reloadinggamestate)
 	globalweather = mapheaderinfo[gamemap-1]->weather;
 
 #ifdef HWRENDER // not win32 only 19990829 by Kin
-	// Jimita: Free extrasubsectors regardless of renderer.
+	// Lactozilla: Free extrasubsectors regardless of renderer.
 	// Maybe we're not in OpenGL anymore.
 	if (extrasubsectors)
 		free(extrasubsectors);

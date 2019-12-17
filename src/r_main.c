@@ -1761,7 +1761,7 @@ void R_RenderPlayerView(player_t *player)
 		skyVisible1 = skyVisible;
 }
 
-// Jimita
+// Lactozilla: Renderer switching
 #ifdef HWRENDER
 void R_InitHardwareMode(void)
 {

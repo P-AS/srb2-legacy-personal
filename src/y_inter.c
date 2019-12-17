@@ -173,7 +173,7 @@ void Y_IntermissionDrawer(void)
 	if (intertype == int_none || rendermode == render_none)
 		return;
 
-	// Jimita
+	// Lactozilla: Renderer switching
 	if (needpatchrecache)
 	{
 		Y_CleanupData();
