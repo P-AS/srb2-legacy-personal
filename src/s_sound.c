@@ -912,11 +912,9 @@ void S_SetSfxVolume(INT32 volume)
 
 void S_ClearSfx(void)
 {
-#ifndef DJGPPDOS
 	size_t i;
 	for (i = 1; i < NUMSFX; i++)
 		I_FreeSfx(S_sfx + i);
-#endif
 }
 
 static void S_StopChannel(INT32 cnum)
@@ -1490,10 +1488,6 @@ void S_ChangeMusicEx(const char *mmusic, UINT16 mflags, boolean looping, UINT32 
 	char newmusic[7];
 	boolean currentmidi = (I_SongType() == MU_MID);
 	boolean midipref = cv_musicpref.value;
-
-#if defined (DC) || defined (_WIN32_WCE) || defined (PSP) || defined(GP2X)
-	S_ClearSfx();
-#endif
 
 	if (S_MusicDisabled())
 		return;

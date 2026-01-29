@@ -123,10 +123,8 @@ void SCR_SetDrawFuncs(void)
 	}*/
 	else
 		I_Error("unknown bytes per pixel mode %d\n", vid.bpp);
-/*#if !defined (DC) && !defined (WII)
-	if (SCR_IsAspectCorrect(vid.width, vid.height))
-		CONS_Alert(CONS_WARNING, M_GetText("Resolution is not aspect-correct!\nUse a multiple of %dx%d\n"), BASEVIDWIDTH, BASEVIDHEIGHT);
-#endif*/
+	/*if (SCR_IsAspectCorrect(vid.width, vid.height))
+		CONS_Alert(CONS_WARNING, M_GetText("Resolution is not aspect-correct!\nUse a multiple of %dx%d\n"), BASEVIDWIDTH, BASEVIDHEIGHT);*/
 
 	wallcolfunc = walldrawerfunc;
 }

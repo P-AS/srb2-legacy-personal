@@ -33,12 +33,6 @@
 #endif
 #include "r_fps.h"
 
-#ifdef PC_DOS
-#include <stdio.h> // for snprintf
-int	snprintf(char *str, size_t n, const char *fmt, ...);
-//int	vsnprintf(char *str, size_t n, const char *fmt, va_list ap);
-#endif
-
 static void R_InitSkins(void);
 
 #define MINZ (FRACUNIT*4)
