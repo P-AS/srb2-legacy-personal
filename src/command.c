@@ -1748,7 +1748,6 @@ static boolean CV_FilterJoyAxisVars(consvar_t *v, const char *valstr)
 
 	if (joyaxis_default)
 	{
-#if !defined (_WII) && !defined  (WMINPUT)
 		if (!stricmp(v->name, "joyaxis_turn"))
 		{
 			if (joyaxis_count > 6) return false;
@@ -1791,7 +1790,6 @@ static boolean CV_FilterJoyAxisVars(consvar_t *v, const char *valstr)
 			if (!stricmp(valstr, "None")) joyaxis_count++;
 			else joyaxis_default = false;
 		}
-#endif
 		// reset all axis settings to defaults
 		if (joyaxis_count == 6)
 		{
@@ -1808,7 +1806,6 @@ static boolean CV_FilterJoyAxisVars(consvar_t *v, const char *valstr)
 
 	if (joyaxis2_default)
 	{
-#if !defined (_WII) && !defined  (WMINPUT)
 		if (!stricmp(v->name, "joyaxis2_turn"))
 		{
 			if (joyaxis2_count > 6) return false;
@@ -1851,7 +1848,6 @@ static boolean CV_FilterJoyAxisVars(consvar_t *v, const char *valstr)
 			if (!stricmp(valstr, "None")) joyaxis2_count++;
 			else joyaxis2_default = false;
 		}
-#endif
 
 		// reset all axis settings to defaults
 		if (joyaxis2_count == 6)
