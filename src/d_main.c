@@ -1558,10 +1558,7 @@ const char *D_Home(void)
 		userhome = M_GetNextParm();
 	else
 	{
-#if defined (GP2X)
-		usehome = false; //let use the CWD
-		return NULL;
-#elif !(defined (__unix__) || defined(__APPLE__) || defined (UNIXCOMMON))
+#if !(defined (__unix__) || defined(__APPLE__) || defined (UNIXCOMMON))
 		if (FIL_FileOK(CONFIGFILENAME))
 			usehome = false; // Let's NOT use home
 		else
