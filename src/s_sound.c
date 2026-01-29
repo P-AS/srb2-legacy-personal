@@ -1489,10 +1489,6 @@ void S_ChangeMusicEx(const char *mmusic, UINT16 mflags, boolean looping, UINT32 
 	boolean currentmidi = (I_SongType() == MU_MID);
 	boolean midipref = cv_musicpref.value;
 
-#if defined (DC) || defined (_WIN32_WCE) || defined (PSP) || defined(GP2X)
-	S_ClearSfx();
-#endif
-
 	if (S_MusicDisabled())
 		return;
 

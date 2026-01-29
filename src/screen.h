@@ -28,7 +28,7 @@
 #endif
 
 // quickhack for V_Init()... to be cleaned up
-#if defined (DC) || defined (_WIN32_WCE) || defined (PSP) || defined (NOPOSTPROCESSING)
+#ifdef NOPOSTPROCESSING
 #define NUMSCREENS 2
 #else
 #define NUMSCREENS 5
@@ -43,19 +43,8 @@
 // we try to re-allocate a minimum of buffers for stability of the memory,
 // so all the small-enough tables based on screen size, are allocated once
 // and for all at the maximum size.
-#if defined (_WIN32_WCE) || defined (DC) || defined (_PSP) || defined (_NDS)
-#define MAXVIDWIDTH 320
-#define MAXVIDHEIGHT 200
-#elif defined (GP2X)
-#define MAXVIDWIDTH 320 //720
-#define MAXVIDHEIGHT 240 //576
-#elif defined (WII) // Wii, VGA/640x480
-#define MAXVIDWIDTH 640
-#define MAXVIDHEIGHT 480
-#else
 #define MAXVIDWIDTH 1920 // don't set this too high because actually
 #define MAXVIDHEIGHT 1200 // lots of tables are allocated with the MAX size.
-#endif
 #define BASEVIDWIDTH 320 // NEVER CHANGE THIS! This is the original
 #define BASEVIDHEIGHT 200 // resolution of the graphics.
 

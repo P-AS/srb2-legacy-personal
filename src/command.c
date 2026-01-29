@@ -1363,7 +1363,7 @@ static void Got_NetVar(UINT8 **p, INT32 playernum)
 		CONS_Alert(CONS_WARNING, M_GetText("Illegal netvar command received from %s\n"), player_names[playernum]);
 
 		if (server)
-			SendKick(playernum, KICK_MSG_CON_FAIL);	
+			SendKick(playernum, KICK_MSG_CON_FAIL);
 		return;
 	}
 	netid = READUINT16(*p);
@@ -1768,7 +1768,6 @@ static boolean CV_FilterJoyAxisVars(consvar_t *v, const char *valstr)
 			else joyaxis_default = false;
 		}
 #endif
-#if !defined (_arch_dreamcast) && !defined (_XBOX) && !defined (PSP)
 		if (!stricmp(v->name, "joyaxis_side"))
 		{
 			if (joyaxis_count > 6) return false;
@@ -1777,7 +1776,6 @@ static boolean CV_FilterJoyAxisVars(consvar_t *v, const char *valstr)
 			if (!stricmp(valstr, "Z-Axis")) joyaxis_count++;
 			else joyaxis_default = false;
 		}
-#endif
 #if !defined (_XBOX) && !defined (PSP)
 		if (!stricmp(v->name, "joyaxis_look"))
 		{
@@ -1834,7 +1832,6 @@ static boolean CV_FilterJoyAxisVars(consvar_t *v, const char *valstr)
 			else joyaxis2_default = false;
 		}
 // #endif
-#if !defined (_arch_dreamcast) && !defined (_XBOX) && !defined (PSP)
 		if (!stricmp(v->name, "joyaxis2_side"))
 		{
 			if (joyaxis2_count > 6) return false;
@@ -1843,7 +1840,6 @@ static boolean CV_FilterJoyAxisVars(consvar_t *v, const char *valstr)
 			if (!stricmp(valstr, "Z-Axis")) joyaxis2_count++;
 			else joyaxis2_default = false;
 		}
-#endif
 #if !defined (_XBOX) // && !defined (PSP)
 		if (!stricmp(v->name, "joyaxis2_look"))
 		{

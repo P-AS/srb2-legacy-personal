@@ -59,16 +59,11 @@
 #ifdef USE_WINSOCK1
 #include <winsock.h>
 #elif !defined (SCOUW2) && !defined (SCOUW7) && !defined (__OS2__)
-#ifdef HAVE_LWIP
-#include <lwip/inet.h>
-#elif !defined (USE_WINSOCK)
+#ifndef USE_WINSOCK
 #include <arpa/inet.h>
 #endif //normal BSD API
 
-#ifdef HAVE_LWIP
-#include <lwip/sockets.h>
-#define ioctl lwip_ioctl
-#elif !defined (USE_WINSOCK) //!HAVE_LWIP
+#ifndef USE_WINSOCK
 #ifdef __APPLE_CC__
 #ifndef _BSD_SOCKLEN_T_
 #define _BSD_SOCKLEN_T_
@@ -80,14 +75,10 @@
 #include <sys/ioctl.h>
 #endif //normal BSD API
 
-#if defined(_arch_dreamcast) && !defined(HAVE_LWIP)
-#include <kos/net.h>
-#elif defined(HAVE_LWIP)
-#include <lwip/lwip.h>
-#elif defined (_PS3)
+#if defined (_PS3)
 #include <net/select.h>
 #include <net/net.h>
-#elif !defined(USE_WINSOCK) //!HAVE_LWIP
+#elif !defined(USE_WINSOCK)
 #include <netdb.h>
 #include <sys/ioctl.h>
 #endif //normal BSD API
@@ -1105,12 +1096,6 @@ boolean I_InitTcpDriver(void)
 		CONS_Debug(DBG_NETPLAY, "WinSock description: %s\n",WSAData.szDescription);
 		CONS_Debug(DBG_NETPLAY, "WinSock System Status: %s\n",WSAData.szSystemStatus);
 #endif
-#ifdef HAVE_LWIP
-		lwip_kos_init();
-#elif defined(_arch_dreamcast)
-		//return;
-		net_init();
-#endif
 #ifdef _PS3
 		netInitialize();
 #endif
@@ -1154,11 +1139,6 @@ void I_ShutdownTcpDriver(void)
 #ifdef USE_WINSOCK
 	WS_addrinfocleanup();
 	WSACleanup();
-#endif
-#ifdef HAVE_LWIP
-	lwip_kos_shutdown();
-#elif defined(_arch_dreamcast)
-	net_shutdown();
 #endif
 #ifdef _PS3
 	netDeinitialize();
