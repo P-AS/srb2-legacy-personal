@@ -39,9 +39,6 @@ port gameOutput : (String -> msg) -> Sub msg
 
 port statusMessage : (String -> msg) -> Sub msg
 
-port pushArgument : () -> Cmd msg
-
-
 
 
 -- MAIN
@@ -149,10 +146,6 @@ update msg model =
         ClickedAddAddon ->
             ( model, addFile () )
 
-        AddArgument ->
-            ( model, pushArgument () )
-
-
 
 
 -- VIEW
@@ -192,9 +185,8 @@ viewControls : Status -> Html Msg
 viewControls status =
     case status of
         Status.NotStarted ->
-            div [ class "flex flex-col items-center gap-y-4" ]
+            div [ class "flex flex-col items-center" ]
                 [ Views.Button.init { text = "Start", onClick = StartGame } |> Views.Button.toHtml
-                ,  Views.Button.init { text = "Add Argument", onClick = AddArgument } |> Views.Button.toHtml
                 , p [] [ span [] [ text "WARNING: This will download approximately 200MB of data" ] ]
                 ]
 

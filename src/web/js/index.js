@@ -32,8 +32,3 @@ app.ports.addFile.subscribe((message) => {
 
   input.click();
 });
-app.ports.pushArgument.subscribe(() =>{
-  if (srb2.userarguments == undefined)
-    srb2.userarguments = "";
-  srb2.userarguments += prompt("Add your arguments here");
-} );
