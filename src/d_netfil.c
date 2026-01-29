@@ -11,16 +11,12 @@
 /// \brief Transfer a file using HSendPacket.
 
 #include <stdio.h>
-#ifndef _WIN32_WCE
 #ifdef __OS2__
 #include <sys/types.h>
 #endif // __OS2__
 #include <sys/stat.h>
-#endif
 
-#if !defined (UNDER_CE)
 #include <time.h>
-#endif
 
 #ifdef _WIN32
 #include <io.h>
@@ -34,7 +30,7 @@
 #ifdef __GNUC__
 #include <unistd.h>
 #include <limits.h>
-#elif defined (_WIN32) && !defined (_WIN32_WCE)
+#elif defined (_WIN32)
 #include <sys/utime.h>
 #endif
 

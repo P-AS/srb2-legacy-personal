@@ -15,13 +15,9 @@
 
 #include "command.h"
 
-#if (defined (_WIN32) || defined (_WIN32_WCE)) && !defined (__CYGWIN__)
-#if defined (_WIN32_WCE) && defined (__GNUC__)
-#include <sys/wcetypes.h>
-#else
+#if defined (_WIN32) && !defined (__CYGWIN__)
 #define RPC_NO_WINDOWS_H
 #include <windows.h>
-#endif
 #define DNWH HWND
 #else
 #define DNWH void * // unused in DOS version

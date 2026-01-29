@@ -22,7 +22,6 @@
 #include "p_saveg.h"
 
 #include "i_time.h"
-#include "i_sound.h" // for I_PlayCD()..
 #include "i_video.h" // for I_FinishUpdate()..
 #include "r_sky.h"
 #include "i_system.h"
@@ -66,7 +65,7 @@
 #include "lua_script.h"
 #include "lua_hook.h"
 
-#if defined (_WIN32) || defined (_WIN32_WCE)
+#ifdef _WIN32
 #include <malloc.h>
 #include <math.h>
 #endif

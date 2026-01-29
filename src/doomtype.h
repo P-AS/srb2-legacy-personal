@@ -19,7 +19,7 @@
 
 #include <stdbool.h>
 
-#if defined (_WIN32) || (defined (_WIN32_WCE) && !defined (__GNUC__))
+#ifdef _WIN32
 //#define WIN32_LEAN_AND_MEAN
 #define RPC_NO_WINDOWS_H
 #include <windows.h>
