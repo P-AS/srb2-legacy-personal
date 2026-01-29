@@ -238,12 +238,6 @@ typedef bool boolean;
 #ifndef ATTRNOINLINE
 #define ATTRNOINLINE
 #endif
-#ifndef XBOXSTATIC
-#define XBOXSTATIC
-#endif
-#ifndef FILESTAMP
-#define FILESTAMP
-#endif
 #ifndef PUREFUNC
 #define PUREFUNC
 #endif
