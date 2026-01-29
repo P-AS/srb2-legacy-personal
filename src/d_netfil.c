@@ -22,10 +22,10 @@
 #include <time.h>
 #endif
 
-#if ((defined (_WIN32) && !defined (_WIN32_WCE)) || defined (__DJGPP__)) && !defined (_XBOX)
+#ifdef _WIN32
 #include <io.h>
 #include <direct.h>
-#elif !defined (_WIN32_WCE) && !(defined (_XBOX) && !defined (__GNUC__))
+#else
 #include <sys/types.h>
 #include <dirent.h>
 #include <utime.h>
@@ -36,10 +36,6 @@
 #include <limits.h>
 #elif defined (_WIN32) && !defined (_WIN32_WCE)
 #include <sys/utime.h>
-#endif
-#ifdef __DJGPP__
-#include <dir.h>
-#include <utime.h>
 #endif
 
 #include "doomdef.h"
@@ -1039,7 +1035,7 @@ void Got_Filetxpak(void)
 			file->status = FS_FOUND;
 			CONS_Printf(M_GetText("Downloading %s...(done)\n"),
 				filename);
-			
+
 			if (luafiletransfers)
 			{
 				// Tell the server we have received the file

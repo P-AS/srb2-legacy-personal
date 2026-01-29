@@ -165,7 +165,7 @@ void SendWeaponPref(void);
 void SendWeaponPref2(void);
 
 static CV_PossibleValue_t usemouse_cons_t[] = {{0, "Off"}, {1, "On"}, {2, "Force"}, {0, NULL}};
-#if (defined (__unix__) && !defined (MSDOS)) || defined(__APPLE__) || defined (UNIXCOMMON)
+#if defined (__unix__) || defined(__APPLE__) || defined (UNIXCOMMON)
 static CV_PossibleValue_t mouse2port_cons_t[] = {{0, "/dev/gpmdata"}, {1, "/dev/ttyS0"},
 	{2, "/dev/ttyS1"}, {3, "/dev/ttyS2"}, {4, "/dev/ttyS3"}, {0, NULL}};
 #else
@@ -275,7 +275,7 @@ consvar_t cv_joyscale2 = CVAR_INIT ("joyscale2", "1", NULL, CV_SAVE|CV_CALL, NUL
 consvar_t cv_joyscale = CVAR_INIT ("joyscale", "1", NULL, CV_SAVE|CV_HIDEN, NULL, NULL); //Alam: Dummy for save
 consvar_t cv_joyscale2 = CVAR_INIT ("joyscale2", "1", NULL, CV_SAVE|CV_HIDEN, NULL, NULL); //Alam: Dummy for save
 #endif
-#if (defined (__unix__) && !defined (MSDOS)) || defined(__APPLE__) || defined (UNIXCOMMON)
+#if defined (__unix__) || defined(__APPLE__) || defined (UNIXCOMMON)
 consvar_t cv_mouse2port = CVAR_INIT ("mouse2port", "/dev/gpmdata", NULL, CV_SAVE, mouse2port_cons_t, NULL);
 consvar_t cv_mouse2opt = CVAR_INIT ("mouse2opt", "0", NULL, CV_SAVE, NULL, NULL);
 #else
@@ -783,7 +783,7 @@ void D_RegisterClientCommands(void)
 	// WARNING: the order is important when initialising mouse2
 	// we need the mouse2port
 	CV_RegisterVar(&cv_mouse2port);
-#if (defined (__unix__) && !defined (MSDOS)) || defined(__APPLE__) || defined (UNIXCOMMON)
+#if defined (__unix__) || defined(__APPLE__) || defined (UNIXCOMMON)
 	CV_RegisterVar(&cv_mouse2opt);
 #endif
 	CV_RegisterVar(&cv_controlperkey);

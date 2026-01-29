@@ -100,7 +100,7 @@ typedef LPVOID (WINAPI *p_MapViewOfFile) (HANDLE, DWORD, DWORD, DWORD, SIZE_T);
 #endif
 #endif
 
-#if (defined (__unix__) && !defined (_MSDOS)) || (defined (UNIXCOMMON) && !defined(__APPLE__))
+#if defined (__unix__) || (defined (UNIXCOMMON) && !defined(__APPLE__))
 #include <errno.h>
 #include <sys/wait.h>
 #ifndef __HAIKU__ // haiku's crash dialog is just objectively better
@@ -336,10 +336,10 @@ int I_OpenURL(const char *url)
 {
 #if SDL_VERSION_ATLEAST(2,0,14)
 	return SDL_OpenURL(va("%s", url));
-#else	
+#else
 	return -1;
 #endif
-}  
+}
 
 static void I_ReportSignal(int num, int coredumped)
 {

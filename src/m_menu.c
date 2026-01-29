@@ -1162,7 +1162,7 @@ static menuitem_t OP_VideoOptionsMenu[] =
 #endif
 
 
-#if (defined (__unix__) && !defined (MSDOS)) || defined (UNIXCOMMON) || defined (HAVE_SDL)
+#if defined (__unix__) || defined (UNIXCOMMON) || defined (HAVE_SDL)
 	{IT_STRING|IT_CVAR,    NULL,   "Fullscreen (F11)",  NULL,        &cv_fullscreen,      15},
 #endif
 
@@ -1278,10 +1278,6 @@ static menuitem_t OP_SoundOptionsMenu[] =
                               NULL, "Music Volume" , NULL,  &cv_digmusicvolume,  20},
 	{IT_STRING | IT_CVAR | IT_CV_SLIDER,
                               NULL, "MIDI Volume"  , NULL,  &cv_midimusicvolume, 30},
-#ifdef PC_DOS
-	{IT_STRING | IT_CVAR | IT_CV_SLIDER,
-                              NULL, "CD Volume"    , NULL,  &cd_volume,          40},
-#endif
 
 	{IT_STRING | IT_CVAR,  NULL,  "SFX"   , NULL,  &cv_gamesounds,        50},
 	{IT_STRING | IT_CVAR,  NULL,  "Digital Music", NULL,  &cv_gamedigimusic,     60},
@@ -8551,23 +8547,14 @@ static void M_VideoModeMenu(INT32 choice)
 
 	memset(modedescs, 0, sizeof(modedescs));
 
-#if (defined (__unix__) && !defined (MSDOS)) || defined (UNIXCOMMON) || defined (HAVE_SDL)
 	VID_PrepareModeList(); // FIXME: hack
-#endif
+
 	vidm_nummodes = 0;
 	vidm_selected = 0;
 	nummodes = VID_NumModes();
 
-#ifdef _WINDOWS
-	// clean that later: skip windowed mode 0, video modes menu only shows FULL SCREEN modes
-	if (nummodes <= NUMSPECIALMODES)
-		i = 0; // unless we have nothing
-	else
-		i = NUMSPECIALMODES;
-#else
-	// DOS does not skip mode 0, because mode 0 is ALWAYS present
 	i = 0;
-#endif
+
 	for (; i < nummodes && vidm_nummodes < MAXMODEDESCS; i++)
 	{
 		desc = VID_GetModeName(i);
