@@ -195,7 +195,7 @@ INT32 M_MapNumber(char first, char second)
 // ==========================================================================
 
 // some libcs has no access function, make our own
-#if defined (_WIN32_WCE) || defined (_XBOX) || defined (_WII) || defined (_PS3)
+#if 0
 int access(const char *path, int amode)
 {
 	int accesshandle = -1;

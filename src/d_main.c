@@ -29,12 +29,7 @@
 #include <malloc.h>
 #endif
 
-#if !defined (UNDER_CE)
 #include <time.h>
-#elif defined (_XBOX)
-#define NO_TIME
-#endif
-
 #include "doomdef.h"
 #include "am_map.h"
 #include "console.h"
@@ -128,14 +123,9 @@ INT32 postimgparam2;
 // These variables are only true if
 // whether the respective sound system is disabled
 // or they're init'ed, but the player just toggled them
-#ifdef _XBOX
-boolean midi_disabled = true, sound_disabled = true;
-boolean digital_disabled = true;
-#else
 boolean midi_disabled = false;
 boolean sound_disabled = false;
 boolean digital_disabled = false;
-#endif
 
 boolean advancedemo;
 #ifdef DEBUGFILE

@@ -12,9 +12,6 @@
 
 #ifdef __GNUC__
 #include <unistd.h>
-#ifdef _XBOX
-#include <openxdk/debug.h>
-#endif
 #endif
 
 #include "doomdef.h"
