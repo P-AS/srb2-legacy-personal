@@ -1478,7 +1478,7 @@ static void CV_SetCVar(consvar_t *var, const char *value, boolean stealth)
 	if (var->flags & CV_NETVAR)
 	{
 		// send the value of the variable
-		XBOXSTATIC UINT8 buf[128];
+		UINT8 buf[128];
 		UINT8 *p = buf;
 		if (!(server || (IsPlayerAdmin(consoleplayer))))
 		{
