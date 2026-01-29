@@ -15,7 +15,7 @@
 ///        plus functions to parse command line parameters, configure game
 ///        parameters, and call the startup functions.
 
-#if (defined (__unix__) && !defined (MSDOS)) || defined(__APPLE__) || defined (UNIXCOMMON)
+#if defined (__unix__) || defined(__APPLE__) || defined (UNIXCOMMON)
 #include <sys/stat.h>
 #include <sys/types.h>
 #endif
@@ -24,23 +24,12 @@
 #include <unistd.h> // for getcwd
 #endif
 
-#ifdef PC_DOS
-#include <stdio.h> // for snprintf
-int	snprintf(char *str, size_t n, const char *fmt, ...);
-//int	vsnprintf(char *str, size_t n, const char *fmt, va_list ap);
-#endif
-
 #ifdef _WIN32
 #include <direct.h>
 #include <malloc.h>
 #endif
 
-#if !defined (UNDER_CE)
 #include <time.h>
-#elif defined (_XBOX)
-#define NO_TIME
-#endif
-
 #include "doomdef.h"
 #include "am_map.h"
 #include "console.h"
@@ -134,14 +123,9 @@ INT32 postimgparam2;
 // These variables are only true if
 // whether the respective sound system is disabled
 // or they're init'ed, but the player just toggled them
-#ifdef _XBOX
-boolean midi_disabled = true, sound_disabled = true;
-boolean digital_disabled = true;
-#else
 boolean midi_disabled = false;
 boolean sound_disabled = false;
 boolean digital_disabled = false;
-#endif
 
 boolean advancedemo;
 #ifdef DEBUGFILE
@@ -150,13 +134,8 @@ INT32 debugload = 0;
 
 char savegamename[256];
 
-#ifdef _arch_dreamcast
-char srb2home[256] = "/cd";
-char srb2path[256] = "/cd";
-#else
 char srb2home[256] = ".";
 char srb2path[256] = ".";
-#endif
 boolean usehome = true;
 const char *pandf = "%s" PATHSEP "%s";
 static char addonsdir[MAX_WADPATH];
@@ -966,7 +945,7 @@ static void IdentifyVersion(void)
 	char *srb2wad1, *srb2wad2;
 	const char *srb2waddir = NULL;
 
-#if (defined (__unix__) && !defined (MSDOS)) || defined (UNIXCOMMON) || defined (HAVE_SDL)
+#if defined (__unix__) || defined (UNIXCOMMON) || defined (HAVE_SDL)
 	// change to the directory where 'srb2.srb' is found
 	srb2waddir = I_LocateWad();
 #endif
@@ -978,17 +957,11 @@ static void IdentifyVersion(void)
 	}
 	else
 	{
-#if !defined(_WIN32_WCE) && !defined(_PS3)
 		if (getcwd(srb2path, 256) != NULL)
 			srb2waddir = srb2path;
 		else
-#endif
 		{
-#ifdef _arch_dreamcast
-			srb2waddir = "/cd";
-#else
 			srb2waddir = ".";
-#endif
 		}
 	}
 
@@ -1053,11 +1026,7 @@ static void IdentifyVersion(void)
 				I_Error("File "str" has been modified with non-music/sound lumps"); \
 		}
 
-#if defined (DC) && 0
-		MUSICTEST("music_dc.dta")
-#else
 		MUSICTEST("music.dta")
-#endif
 	}
 #endif
 }
@@ -1348,7 +1317,7 @@ void D_SRB2Main(void)
 
 	G_LoadGameData();
 
-#if (defined (__unix__) && !defined (MSDOS)) || defined (UNIXCOMMON) || defined (HAVE_SDL)
+#if defined (__unix__) || defined (UNIXCOMMON) || defined (HAVE_SDL)
 	VID_PrepareModeList(); // Regenerate Modelist according to cv_fullscreen
 #endif
 
@@ -1584,26 +1553,19 @@ const char *D_Home(void)
 #ifdef ANDROID
 	return "/data/data/org.srb2/";
 #endif
-#ifdef _arch_dreamcast
-	char VMUHOME[] = "HOME=/vmu/a1";
-	putenv(VMUHOME); //don't use I_PutEnv
-#endif
 
 	if (M_CheckParm("-home") && M_IsNextParm())
 		userhome = M_GetNextParm();
 	else
 	{
-#if defined (GP2X)
-		usehome = false; //let use the CWD
-		return NULL;
-#elif !((defined (__unix__) && !defined (MSDOS)) || defined(__APPLE__) || defined (UNIXCOMMON)) && !defined (__APPLE__) && !defined(_WIN32_WCE)
+#if !(defined (__unix__) || defined(__APPLE__) || defined (UNIXCOMMON))
 		if (FIL_FileOK(CONFIGFILENAME))
 			usehome = false; // Let's NOT use home
 		else
 #endif
 			userhome = I_GetEnv("HOME"); //Alam: my new HOME for srb2
 	}
-#if defined (_WIN32) && !defined(_WIN32_WCE) //Alam: only Win32 have APPDATA and USERPROFILE
+#ifdef _WIN32 //Alam: only Win32 have APPDATA and USERPROFILE
 	if (!userhome && usehome) //Alam: Still not?
 	{
 		char *testhome = NULL;

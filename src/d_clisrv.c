@@ -10,9 +10,7 @@
 /// \file  d_clisrv.c
 /// \brief SRB2 Network game communication and protocol, all OS independent parts.
 
-#if !defined (UNDER_CE)
 #include <time.h>
-#endif
 #ifdef __GNUC__
 #include <unistd.h> //for unlink
 #endif
@@ -1091,7 +1089,7 @@ static void SV_SavedGame(void)
 {
 	size_t length;
 	UINT8 *savebuffer;
-	XBOXSTATIC char tmpsave[256];
+	char tmpsave[256];
 
 	if (!cv_dumpconsistency.value)
 		return;
@@ -1133,7 +1131,7 @@ static void CL_LoadReceivedSavegame(boolean reloading)
 {
 	UINT8 *savebuffer = NULL;
 	size_t length, decompressedlen;
-	XBOXSTATIC char *tmpsave = Z_Malloc(512, PU_STATIC, NULL);
+	char *tmpsave = Z_Malloc(512, PU_STATIC, NULL);
 
 	snprintf(tmpsave, 512, "%s" PATHSEP TMPSAVENAME, srb2home);
 
@@ -1731,7 +1729,7 @@ static void CL_ConnectToServer(void)
 	tic_t asksent;
 #endif
 #ifdef JOININGAME
-	XBOXSTATIC char *tmpsave = Z_Malloc(512, PU_STATIC, NULL);
+	char *tmpsave = Z_Malloc(512, PU_STATIC, NULL);
 
 	snprintf(tmpsave, 512, "%s" PATHSEP TMPSAVENAME, srb2home);
 #endif
@@ -2290,7 +2288,7 @@ static void Command_Ban(void)
 
 	if (server || IsPlayerAdmin(consoleplayer))
 	{
-		XBOXSTATIC UINT8 buf[3 + MAX_REASONLENGTH];
+		UINT8 buf[3 + MAX_REASONLENGTH];
 		UINT8 *p = buf;
 		const SINT8 pn = nametonum(COM_Argv(1));
 		const INT32 node = playernode[(INT32)pn];
@@ -2395,7 +2393,7 @@ static void Command_Kick(void)
 
 	if (server || IsPlayerAdmin(consoleplayer))
 	{
-		XBOXSTATIC UINT8 buf[3 + MAX_REASONLENGTH];
+		UINT8 buf[3 + MAX_REASONLENGTH];
 		UINT8 *p = buf;
 		const SINT8 pn = nametonum(COM_Argv(1));
 
@@ -2447,7 +2445,7 @@ static void Command_Kick(void)
 static void Got_KickCmd(UINT8 **p, INT32 playernum)
 {
 	INT32 pnum, msg;
-	XBOXSTATIC char buf[3 + MAX_REASONLENGTH];
+	char buf[3 + MAX_REASONLENGTH];
 	char *reason = buf;
 	kickreason_t kickreason = KR_KICK;
 
@@ -2939,7 +2937,7 @@ static void Got_AddPlayer(UINT8 **p, INT32 playernum)
 static boolean SV_AddWaitingPlayers(void)
 {
 	INT32 node, n, newplayer = false;
-	XBOXSTATIC UINT8 buf[2];
+	UINT8 buf[2];
 	UINT8 newplayernum = 0;
 
 	// What is the reason for this? Why can't newplayernum always be 0?
@@ -3525,12 +3523,12 @@ static void HandlePacketFromAwayNode(SINT8 node)
   *
   */
 static void HandlePacketFromPlayer(SINT8 node)
-{FILESTAMP
-	XBOXSTATIC INT32 netconsole;
-	XBOXSTATIC tic_t realend, realstart;
-	XBOXSTATIC UINT8 *pak, *txtpak, numtxtpak;
-	XBOXSTATIC UINT8 finalmd5[16];/* Well, it's the cool thing to do? */
-FILESTAMP
+{
+	INT32 netconsole;
+	tic_t realend, realstart;
+	UINT8 *pak, *txtpak, numtxtpak;
+	UINT8 finalmd5[16];/* Well, it's the cool thing to do? */
+
 
 	txtpak = NULL;
 
@@ -3930,9 +3928,9 @@ FILESTAMP
   *
   */
 static void GetPackets(void)
-{FILESTAMP
-	XBOXSTATIC SINT8 node; // The packet sender
-FILESTAMP
+{
+	SINT8 node; // The packet sender
+
 
 	player_joining = false;
 
@@ -4723,9 +4721,9 @@ void NetUpdate(void)
 
 	if (server)
 		CL_SendClientCmd(); // send it
-FILESTAMP
+
 	GetPackets(); // get packet from client or from server
-FILESTAMP
+
 	// client send the command after a receive of the server
 	// the server send before because in single player is beter
 
@@ -4815,7 +4813,7 @@ void D_MD5PasswordPass(const UINT8 *buffer, size_t len, const char *salt, void *
 	(void)salt;
 	memset(dest, 0, 16);
 #else
-	XBOXSTATIC char tmpbuf[256];
+	char tmpbuf[256];
 	const size_t sl = strlen(salt);
 
 	if (len > 256-sl)
