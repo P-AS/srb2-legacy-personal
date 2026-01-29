@@ -1363,7 +1363,7 @@ static void Got_NetVar(UINT8 **p, INT32 playernum)
 		CONS_Alert(CONS_WARNING, M_GetText("Illegal netvar command received from %s\n"), player_names[playernum]);
 
 		if (server)
-			SendKick(playernum, KICK_MSG_CON_FAIL);	
+			SendKick(playernum, KICK_MSG_CON_FAIL);
 		return;
 	}
 	netid = READUINT16(*p);
@@ -1377,9 +1377,6 @@ static void Got_NetVar(UINT8 **p, INT32 playernum)
 		CONS_Alert(CONS_WARNING, "Netvar not found with netid %hu\n", netid);
 		return;
 	}
-#if 0 //defined (GP2X) || defined (PSP)
-	CONS_Printf("Netvar received: %s [netid=%d] value %s\n", cvar->name, netid, svalue);
-#endif
 	DEBFILE(va("Netvar received: %s [netid=%d] value %s\n", cvar->name, netid, svalue));
 
 	Setvalue(cvar, svalue, stealth);
@@ -1478,7 +1475,7 @@ static void CV_SetCVar(consvar_t *var, const char *value, boolean stealth)
 	if (var->flags & CV_NETVAR)
 	{
 		// send the value of the variable
-		XBOXSTATIC UINT8 buf[128];
+		UINT8 buf[128];
 		UINT8 *p = buf;
 		if (!(server || (IsPlayerAdmin(consoleplayer))))
 		{
@@ -1748,7 +1745,6 @@ static boolean CV_FilterJoyAxisVars(consvar_t *v, const char *valstr)
 
 	if (joyaxis_default)
 	{
-#if !defined (_WII) && !defined  (WMINPUT)
 		if (!stricmp(v->name, "joyaxis_turn"))
 		{
 			if (joyaxis_count > 6) return false;
@@ -1758,7 +1754,6 @@ static boolean CV_FilterJoyAxisVars(consvar_t *v, const char *valstr)
 			if (!stricmp(valstr, "X-Axis")) joyaxis_count++;
 			else joyaxis_default = false;
 		}
-#if !defined (PSP)
 		if (!stricmp(v->name, "joyaxis_move"))
 		{
 			if (joyaxis_count > 6) return false;
@@ -1767,8 +1762,6 @@ static boolean CV_FilterJoyAxisVars(consvar_t *v, const char *valstr)
 			if (!stricmp(valstr, "Y-Axis")) joyaxis_count++;
 			else joyaxis_default = false;
 		}
-#endif
-#if !defined (_arch_dreamcast) && !defined (_XBOX) && !defined (PSP)
 		if (!stricmp(v->name, "joyaxis_side"))
 		{
 			if (joyaxis_count > 6) return false;
@@ -1777,8 +1770,6 @@ static boolean CV_FilterJoyAxisVars(consvar_t *v, const char *valstr)
 			if (!stricmp(valstr, "Z-Axis")) joyaxis_count++;
 			else joyaxis_default = false;
 		}
-#endif
-#if !defined (_XBOX) && !defined (PSP)
 		if (!stricmp(v->name, "joyaxis_look"))
 		{
 			if (joyaxis_count > 6) return false;
@@ -1787,7 +1778,6 @@ static boolean CV_FilterJoyAxisVars(consvar_t *v, const char *valstr)
 			if (!stricmp(valstr, "None")) joyaxis_count++;
 			else joyaxis_default = false;
 		}
-#endif
 		if (!stricmp(v->name, "joyaxis_fire")
 			|| !stricmp(v->name, "joyaxis_firenormal"))
 		{
@@ -1797,7 +1787,6 @@ static boolean CV_FilterJoyAxisVars(consvar_t *v, const char *valstr)
 			if (!stricmp(valstr, "None")) joyaxis_count++;
 			else joyaxis_default = false;
 		}
-#endif
 		// reset all axis settings to defaults
 		if (joyaxis_count == 6)
 		{
@@ -1814,7 +1803,6 @@ static boolean CV_FilterJoyAxisVars(consvar_t *v, const char *valstr)
 
 	if (joyaxis2_default)
 	{
-#if !defined (_WII) && !defined  (WMINPUT)
 		if (!stricmp(v->name, "joyaxis2_turn"))
 		{
 			if (joyaxis2_count > 6) return false;
@@ -1824,7 +1812,6 @@ static boolean CV_FilterJoyAxisVars(consvar_t *v, const char *valstr)
 			if (!stricmp(valstr, "X-Axis")) joyaxis2_count++;
 			else joyaxis2_default = false;
 		}
-// #if !defined (PSP)
 		if (!stricmp(v->name, "joyaxis2_move"))
 		{
 			if (joyaxis2_count > 6) return false;
@@ -1833,8 +1820,6 @@ static boolean CV_FilterJoyAxisVars(consvar_t *v, const char *valstr)
 			if (!stricmp(valstr, "Y-Axis")) joyaxis2_count++;
 			else joyaxis2_default = false;
 		}
-// #endif
-#if !defined (_arch_dreamcast) && !defined (_XBOX) && !defined (PSP)
 		if (!stricmp(v->name, "joyaxis2_side"))
 		{
 			if (joyaxis2_count > 6) return false;
@@ -1843,8 +1828,6 @@ static boolean CV_FilterJoyAxisVars(consvar_t *v, const char *valstr)
 			if (!stricmp(valstr, "Z-Axis")) joyaxis2_count++;
 			else joyaxis2_default = false;
 		}
-#endif
-#if !defined (_XBOX) // && !defined (PSP)
 		if (!stricmp(v->name, "joyaxis2_look"))
 		{
 			if (joyaxis2_count > 6) return false;
@@ -1853,7 +1836,6 @@ static boolean CV_FilterJoyAxisVars(consvar_t *v, const char *valstr)
 			if (!stricmp(valstr, "None")) joyaxis2_count++;
 			else joyaxis2_default = false;
 		}
-#endif
 		if (!stricmp(v->name, "joyaxis2_fire")
 			|| !stricmp(v->name, "joyaxis2_firenormal"))
 		{
@@ -1863,7 +1845,6 @@ static boolean CV_FilterJoyAxisVars(consvar_t *v, const char *valstr)
 			if (!stricmp(valstr, "None")) joyaxis2_count++;
 			else joyaxis2_default = false;
 		}
-#endif
 
 		// reset all axis settings to defaults
 		if (joyaxis2_count == 6)

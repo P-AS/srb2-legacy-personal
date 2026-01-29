@@ -149,9 +149,6 @@ typedef struct
 #ifdef _WIN32
 #define ioctl ioctlsocket
 #define close closesocket
-#ifdef WATTCP
-#define strerror strerror_s
-#endif
 #ifdef _WIN32
 #undef errno
 #define errno h_errno // some very strange things happen when not using h_error
@@ -183,7 +180,7 @@ UINT16 current_port = 0;
 typedef SOCKET SOCKET_TYPE;
 #define ERRSOCKET (SOCKET_ERROR)
 #else
-#if (defined (__unix__) && !defined (MSDOS)) || defined (__APPLE__) || defined (__HAIKU__)
+#if defined (__unix__) || defined (__APPLE__) || defined (__HAIKU__)
 typedef int SOCKET_TYPE;
 #else
 typedef unsigned long SOCKET_TYPE;
@@ -191,7 +188,7 @@ typedef unsigned long SOCKET_TYPE;
 #define ERRSOCKET (-1)
 #endif
 
-#if (defined (WATTCP) && !defined (__libsocket_socklen_t)) || defined (_WIN32)
+#ifdef USE_WINSOCK1
 typedef int socklen_t;
 #endif
 

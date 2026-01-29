@@ -1169,7 +1169,7 @@ static menuitem_t OP_VideoOptionsMenu[] =
 #endif
 
 
-#if (defined (__unix__) && !defined (MSDOS)) || defined (UNIXCOMMON) || defined (HAVE_SDL)
+#if defined (__unix__) || defined (UNIXCOMMON) || defined (HAVE_SDL)
 	{IT_STRING|IT_CVAR,    NULL,   "Fullscreen (F11)",  NULL,        &cv_fullscreen,      15},
 #endif
 
@@ -1177,18 +1177,19 @@ static menuitem_t OP_VideoOptionsMenu[] =
 	{IT_STRING | IT_CVAR | IT_CV_SLIDER, NULL, "Saturation", NULL,  &cv_globalsaturation, 30},
 	{IT_SUBMENU|IT_STRING, NULL, "Advanced Color Settings...", "Adjust color mapping and per-color brightness",  &OP_ColorOptionsDef, 35},
 
-	{IT_STRING | IT_CVAR,  NULL, "Draw Distance",   NULL,       &cv_drawdist,             45},
-	{IT_STRING | IT_CVAR,  NULL, "NiGHTS Hoop Draw Dist", NULL, &cv_drawdist_nights,      50},
-	{IT_STRING | IT_CVAR,  NULL, "Precip Draw Dist",   NULL,    &cv_drawdist_precip,      55},
-	{IT_STRING | IT_CVAR,  NULL, "Precip Density",    NULL,     &cv_precipdensity,        60},
-	{IT_STRING | IT_CVAR,  NULL, "Show FPS",       NULL,        &cv_ticrate,              65},
-	{IT_STRING | IT_CVAR,  NULL, "Show TPS",        NULL,       &cv_tpscounter,           70},
-	{IT_STRING | IT_CVAR,  NULL, "FPS/TPS Counter Size", NULL,  &cv_fpssize,              75},
-	{IT_STRING | IT_CVAR,  NULL, "Clear Before Redraw",  NULL,  &cv_homremoval,           80},
-	{IT_STRING | IT_CVAR,  NULL, "Vertical Sync",    NULL,      &cv_vidwait,              85},
-	{IT_STRING | IT_CVAR,  NULL, "FPS Cap",         NULL,       &cv_fpscap,               90},
+	{IT_STRING|IT_CVAR|IT_CV_SLIDER,  NULL, "Field of view", NULL,         &cv_fov,                  45},
+	{IT_STRING | IT_CVAR,             NULL, "Draw Distance",   NULL,       &cv_drawdist,             50},
+	{IT_STRING | IT_CVAR,             NULL, "NiGHTS Hoop Draw Dist", NULL, &cv_drawdist_nights,      55},
+	{IT_STRING | IT_CVAR,             NULL, "Precip Draw Dist",   NULL,    &cv_drawdist_precip,      60},
+	{IT_STRING | IT_CVAR,             NULL, "Precip Density",    NULL,     &cv_precipdensity,        65},
+	{IT_STRING | IT_CVAR,             NULL, "Show FPS",       NULL,        &cv_ticrate,              70},
+	{IT_STRING | IT_CVAR,             NULL, "Show TPS",        NULL,       &cv_tpscounter,           75},
+	{IT_STRING | IT_CVAR,             NULL, "FPS/TPS Counter Size", NULL,  &cv_fpssize,              80},
+	{IT_STRING | IT_CVAR,             NULL, "Clear Before Redraw",  NULL,  &cv_homremoval,           85},
+	{IT_STRING | IT_CVAR,             NULL, "Vertical Sync",    NULL,      &cv_vidwait,              90},
+	{IT_STRING | IT_CVAR,             NULL, "FPS Cap",         NULL,       &cv_fpscap,               95},
 #ifdef HWRENDER
-	{IT_CALL | IT_STRING, NULL, "OpenGL Options...",  "Change OpenGL-specific options",        M_OpenGLOptionsMenu, 100},
+	{IT_CALL | IT_STRING, NULL, "OpenGL Options...",  "Change OpenGL-specific options",        M_OpenGLOptionsMenu, 105},
 #endif
 };
 
@@ -1281,11 +1282,10 @@ static menuitem_t OP_OpenGLOptionsMenu[] =
 	{IT_STRING|IT_CVAR,         NULL, "Shaders", NULL, 	     &cv_glshaders,        50},
 	{IT_STRING|IT_CVAR,         NULL, "Lack of Perspective", NULL,  &cv_glshearing,   60},
 	{IT_STRING|IT_CVAR,         NULL, "Palette Rendering", NULL,  &cv_glpaletterendering,   70},
-	{IT_STRING|IT_CVAR|IT_CV_SLIDER,  NULL, "Field of view", NULL,   &cv_fov,            90},
-	{IT_STRING|IT_CVAR,         NULL, "Quality",     NULL,     &cv_scr_depth,        100},
-	{IT_STRING|IT_CVAR,         NULL, "Texture Filter", NULL,   &cv_glfiltermode,     110},
-	{IT_STRING|IT_CVAR,         NULL, "Anisotropic",  NULL,    &cv_glanisotropicmode,120},
-	{IT_STRING|IT_CVAR,         NULL, "OpenGL Loading Screen", NULL,  &cv_glloadingscreen, 130},
+	{IT_STRING|IT_CVAR,         NULL, "Quality",     NULL,     &cv_scr_depth,        90},
+	{IT_STRING|IT_CVAR,         NULL, "Texture Filter", NULL,   &cv_glfiltermode,     100},
+	{IT_STRING|IT_CVAR,         NULL, "Anisotropic",  NULL,    &cv_glanisotropicmode,110},
+	{IT_STRING|IT_CVAR,         NULL, "OpenGL Loading Screen", NULL,  &cv_glloadingscreen, 120},
 };
 
 #endif
@@ -1298,10 +1298,6 @@ static menuitem_t OP_SoundOptionsMenu[] =
                               NULL, "Music Volume" , NULL,  &cv_digmusicvolume,  20},
 	{IT_STRING | IT_CVAR | IT_CV_SLIDER,
                               NULL, "MIDI Volume"  , NULL,  &cv_midimusicvolume, 30},
-#ifdef PC_DOS
-	{IT_STRING | IT_CVAR | IT_CV_SLIDER,
-                              NULL, "CD Volume"    , NULL,  &cd_volume,          40},
-#endif
 
 	{IT_STRING | IT_CVAR,  NULL,  "SFX"   , NULL,  &cv_gamesounds,        50},
 	{IT_STRING | IT_CVAR,  NULL,  "Digital Music", NULL,  &cv_gamedigimusic,     60},
@@ -3213,7 +3209,12 @@ static void M_DrawSlider(INT32 x, INT32 y, const consvar_t *cv)
 	else if (range > 100)
 		range = 100;
 
-	range_default = ((atoi(cv->defaultvalue) - cv->PossibleValue[0].value) * 100 /
+	if (cv->flags & CV_FLOAT)
+		range_default = (INT32)(atof(cv->defaultvalue)*FRACUNIT);
+	else
+		range_default = atoi(cv->defaultvalue);
+
+	range_default = ((range_default - cv->PossibleValue[0].value) * 100 /
 	 (cv->PossibleValue[i].value - cv->PossibleValue[0].value));
 
 	if (range_default < 0)
@@ -8610,23 +8611,14 @@ static void M_VideoModeMenu(INT32 choice)
 
 	memset(modedescs, 0, sizeof(modedescs));
 
-#if (defined (__unix__) && !defined (MSDOS)) || defined (UNIXCOMMON) || defined (HAVE_SDL)
 	VID_PrepareModeList(); // FIXME: hack
-#endif
+
 	vidm_nummodes = 0;
 	vidm_selected = 0;
 	nummodes = VID_NumModes();
 
-#ifdef _WINDOWS
-	// clean that later: skip windowed mode 0, video modes menu only shows FULL SCREEN modes
-	if (nummodes <= NUMSPECIALMODES)
-		i = 0; // unless we have nothing
-	else
-		i = NUMSPECIALMODES;
-#else
-	// DOS does not skip mode 0, because mode 0 is ALWAYS present
 	i = 0;
-#endif
+
 	for (; i < nummodes && vidm_nummodes < MAXMODEDESCS; i++)
 	{
 		desc = VID_GetModeName(i);
