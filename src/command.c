@@ -1377,7 +1377,7 @@ static void Got_NetVar(UINT8 **p, INT32 playernum)
 		CONS_Alert(CONS_WARNING, "Netvar not found with netid %hu\n", netid);
 		return;
 	}
-#if 0 //defined (GP2X) || defined (PSP)
+#if 0
 	CONS_Printf("Netvar received: %s [netid=%d] value %s\n", cvar->name, netid, svalue);
 #endif
 	DEBFILE(va("Netvar received: %s [netid=%d] value %s\n", cvar->name, netid, svalue));
@@ -1758,7 +1758,6 @@ static boolean CV_FilterJoyAxisVars(consvar_t *v, const char *valstr)
 			if (!stricmp(valstr, "X-Axis")) joyaxis_count++;
 			else joyaxis_default = false;
 		}
-#if !defined (PSP)
 		if (!stricmp(v->name, "joyaxis_move"))
 		{
 			if (joyaxis_count > 6) return false;
@@ -1767,7 +1766,6 @@ static boolean CV_FilterJoyAxisVars(consvar_t *v, const char *valstr)
 			if (!stricmp(valstr, "Y-Axis")) joyaxis_count++;
 			else joyaxis_default = false;
 		}
-#endif
 		if (!stricmp(v->name, "joyaxis_side"))
 		{
 			if (joyaxis_count > 6) return false;
@@ -1820,7 +1818,6 @@ static boolean CV_FilterJoyAxisVars(consvar_t *v, const char *valstr)
 			if (!stricmp(valstr, "X-Axis")) joyaxis2_count++;
 			else joyaxis2_default = false;
 		}
-// #if !defined (PSP)
 		if (!stricmp(v->name, "joyaxis2_move"))
 		{
 			if (joyaxis2_count > 6) return false;
@@ -1829,7 +1826,6 @@ static boolean CV_FilterJoyAxisVars(consvar_t *v, const char *valstr)
 			if (!stricmp(valstr, "Y-Axis")) joyaxis2_count++;
 			else joyaxis2_default = false;
 		}
-// #endif
 		if (!stricmp(v->name, "joyaxis2_side"))
 		{
 			if (joyaxis2_count > 6) return false;
