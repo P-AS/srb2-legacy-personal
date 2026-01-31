@@ -38,6 +38,10 @@ platform=freebsd
 else ifdef OPENBSD
 UNIX=1
 platform=openbsd
+else ifdef MACOS
+UNIX=1
+NONX86=1
+platform=macos
 else ifdef SOLARIS # FIXME: UNTESTED
 UNIX=1
 platform=solaris
