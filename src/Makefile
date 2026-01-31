@@ -313,8 +313,10 @@ unexport UPX
 
 # executable stripped of debugging symbols
 $(exe) : $(dbg) | $$(@D)/
+ifndef MACOS
 	$(.)$(OBJCOPY) --strip-debug $< $@
 	$(.)-$(OBJCOPY) --add-gnu-debuglink=$< $@
+endif
 ifdef UPX
 	$(call Echo,Compressing final executable...)
 	$(.)-$(upx) $@
