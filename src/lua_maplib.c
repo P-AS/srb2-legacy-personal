@@ -261,6 +261,7 @@ enum mapheaderinfo_e
 	mapheaderinfo_musname,
 	mapheaderinfo_mustrack,
 	mapheaderinfo_muspos,
+	mapheaderinfo_marathonnext,
 	mapheaderinfo_musinterfadeout,
 	mapheaderinfo_musintername,
 	mapheaderinfo_forcecharacter,
@@ -1534,6 +1535,8 @@ static int mapheaderinfo_get(lua_State *L)
 	case mapheaderinfo_typeoflevel:
 		lua_pushinteger(L, header->typeoflevel);
 		break;
+	case mapheaderinfo_marathonnext:
+		lua_pushinteger(L, header->marathonnext);
 	case mapheaderinfo_nextlevel:
 		lua_pushinteger(L, header->nextlevel);
 		break;

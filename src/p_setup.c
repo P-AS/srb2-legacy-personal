@@ -184,6 +184,8 @@ static void P_ClearSingleMapHeaderInfo(INT16 i)
 
 	mapheaderinfo[num]->nextlevel = (INT16)(i + 1);
 
+	mapheaderinfo[num]->marathonnext = 0;
+
 	snprintf(mapheaderinfo[num]->musname, 7, "%sM", G_BuildMapName(i));
 	mapheaderinfo[num]->musname[6] = 0;
 

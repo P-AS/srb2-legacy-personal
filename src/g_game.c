@@ -84,7 +84,10 @@ UINT8 globalweather = 0;
 INT32 curWeather = PRECIP_NONE;
 INT32 cursaveslot = -1; // Auto-save 1p savegame slot
 INT16 lastmapsaved = 0; // Last map we auto-saved at
-boolean gamecomplete = false;
+UINT8 gamecomplete = 0;
+
+marathonmode_t marathonmode = 0;
+tic_t marathontime = 0;
 
 UINT16 mainwads = 0;
 boolean modifiedgame; // Set if homebrew PWAD stuff has been added.
@@ -121,7 +124,7 @@ UINT32 totalrings; // for intermission
 INT16 lastmap; // last level you were at (returning from special stages)
 tic_t timeinmap; // Ticker for time spent in level (used for levelcard display)
 
-INT16 spstage_start;
+INT16 spstage_start, spmarathon_start;
 INT16 sstage_start;
 INT16 sstage_end;
 
@@ -670,6 +673,8 @@ void G_SetGameModified(boolean silent)
 	// If in record attack recording, cancel it.
 	if (modeattacking)
 		M_EndModeAttackRun();
+	else if (marathonmode)
+		Command_ExitGame_f();
 }
 
 /** Builds an original game map name from a map number.
@@ -1854,6 +1859,10 @@ void G_Ticker(boolean run)
 	UINT32 i;
 	INT32 buf;
 
+	// see also SCR_DisplayMarathonInfo
+	if ((marathonmode & (MA_INIT|MA_INGAME)) == MA_INGAME && gamestate == GS_LEVEL)
+		marathontime++;
+
 	P_MapStart();
 	// do player reborns if needed
 	if (gamestate == GS_LEVEL)
@@ -1863,8 +1872,13 @@ void G_Ticker(boolean run)
 		{
 			G_ClearRetryFlag();
 
-			// Costs a life to retry ... unless the player in question is dead already.
-			if (G_GametypeUsesLives() && players[consoleplayer].playerstate == PST_LIVE)
+			// Costs a life to retry ... unless the player in question is dead already, or you haven't even touched the first starpost in marathon run.
+			if (marathonmode && gamemap == spmarathon_start && !players[consoleplayer].starposttime)
+			{
+				marathonmode |= MA_INIT;
+				marathontime = 0;
+			}
+			else if (G_GametypeUsesLives() && players[consoleplayer].playerstate == PST_LIVE)
 				players[consoleplayer].lives -= 1;
 
 			G_DoReborn(consoleplayer);
@@ -2486,7 +2500,7 @@ void G_DoReborn(INT32 playernum)
 			player->starpostz = 0;
 			player->starpostnum = 0;
 		}
-		if (!countdowntimeup && (mapheaderinfo[gamemap-1]->levelflags & LF_NORELOAD))
+		if (!countdowntimeup && (mapheaderinfo[gamemap-1]->levelflags & LF_NORELOAD) && !(marathonmode & MA_INIT))
 		{
 			INT32 i;
 
@@ -2794,8 +2808,14 @@ static void G_DoCompleted(void)
 	// nextmap is 0-based, unlike gamemap
 	if (nextmapoverride != 0)
 		nextmap = (INT16)(nextmapoverride-1);
+	else if (marathonmode && mapheaderinfo[gamemap-1]->marathonnext)
+		nextmap = (INT16)(mapheaderinfo[gamemap-1]->marathonnext-1);
 	else
+	{
 		nextmap = (INT16)(mapheaderinfo[gamemap-1]->nextlevel-1);
+		if (marathonmode && nextmap == spmarathon_start-1)
+			nextmap = 1100-1; // No infinite loop for you
+	}
 
 	// Remember last map for when you come out of the special stage.
 	if (!G_IsSpecialStage(gamemap))
@@ -2819,6 +2839,8 @@ static void G_DoCompleted(void)
 			visitedmap[cm/8] |= (1<<(cm&7));
 			if (!mapheaderinfo[cm])
 				cm = -1; // guarantee error execution
+			else if (marathonmode && mapheaderinfo[cm]->marathonnext)
+				cm = (INT16)(mapheaderinfo[cm]->marathonnext-1);
 			else
 				cm = (INT16)(mapheaderinfo[cm]->nextlevel-1);
 
@@ -2896,6 +2918,22 @@ static void G_DoCompleted(void)
 	if (nextmap < NUMMAPS && !mapheaderinfo[nextmap])
 		P_AllocMapHeader(nextmap);
 
+	// do this before going to the intermission or starting a custom cutscene, mostly for the sake of marathon mode but it also massively reduces redundant file save events in f_finale.c
+	if (nextmap >= 1100-1)
+	{
+		if (!gamecomplete)
+			gamecomplete = 2; // special temporary mode to prevent using SP level select in pause menu until the intermission is over without restricting it in every intermission
+		if (cursaveslot > 0)
+		{
+			if (marathonmode)
+			{
+				cursaveslot = 0;
+			}
+			else if ((!modifiedgame || savemoddata) && !(netgame || multiplayer))
+				G_SaveGame((UINT32)cursaveslot);
+		}
+	}
+
 	if (skipstats && !modeattacking) // Don't skip stats if we're in record attack
 		G_AfterIntermission();
 	else
@@ -2905,11 +2943,15 @@ static void G_DoCompleted(void)
 	}
 }
 
+// See also F_EndCutscene, the only other place which handles intra-map/ending transitions
 void G_AfterIntermission(void)
 {
+	if (gamecomplete == 2) // special temporary mode to prevent using SP level select in pause menu until the intermission is over without restricting it in every intermission
+		gamecomplete = 1;
+
 	HU_ClearCEcho();
 
-	if (mapheaderinfo[gamemap-1]->cutscenenum && !modeattacking) // Start a custom cutscene.
+	if (mapheaderinfo[gamemap-1]->cutscenenum && !modeattacking && !(marathonmode & MA_NOCUTSCENES)) // Start a custom cutscene.
 		F_StartCustomCutscene(mapheaderinfo[gamemap-1]->cutscenenum-1, false, false);
 	else
 	{
@@ -3041,7 +3083,7 @@ void G_EndGame(void)
 void G_LoadGameSettings(void)
 {
 	// defaults
-	spstage_start = 1;
+	spstage_start = spmarathon_start = 1;
 	sstage_start = 50;
 	sstage_end = 57; // 8 special stages in vanilla SRB2
 	useNightsSS = false; //true;
@@ -3457,6 +3499,11 @@ void G_LoadGame(UINT32 slot, INT16 mapoverride)
 		memset(&savedata, 0, sizeof(savedata));
 		return;
 	}
+	if (marathonmode)
+	{
+		marathontime = READUINT32(save_p);
+		marathonmode |= READUINT8(save_p);
+	}
 
 	// done
 	Z_Free(savebuffer);
@@ -3488,10 +3535,6 @@ void G_SaveGame(UINT32 savegameslot)
 	sprintf(savename, savegamename, savegameslot);
 	backup = va("%s",savename);
 
-	// save during evaluation or credits? game's over, folks!
-	if (gamestate == GS_CREDITS || gamestate == GS_EVALUATION)
-		gamecomplete = true;
-
 	gameaction = ga_nothing;
 	{
 		char name[VERSIONSIZE];
@@ -3509,6 +3552,11 @@ void G_SaveGame(UINT32 savegameslot)
 		WRITEMEM(save_p, name, VERSIONSIZE);
 
 		P_SaveGame();
+		if (marathonmode)
+		{
+			WRITEUINT32(save_p, marathontime);
+			WRITEUINT8(save_p, (marathonmode & ~MA_INIT));
+		}
 
 		length = save_p - savebuffer;
 		saved = FIL_WriteFile(backup, savebuffer, length);
@@ -3655,7 +3703,7 @@ void G_InitNew(UINT8 pultmode, const char *mapname, boolean resetplayer, boolean
 	automapactive = false;
 	imcontinuing = false;
 
-	if (!skipprecutscene && mapheaderinfo[gamemap-1]->precutscenenum && !modeattacking) // Start a custom cutscene.
+	if (!skipprecutscene && mapheaderinfo[gamemap-1]->precutscenenum && !modeattacking  && !(marathonmode & MA_NOCUTSCENES)) // Start a custom cutscene.
 		F_StartCustomCutscene(mapheaderinfo[gamemap-1]->precutscenenum-1, true, resetplayer);
 	else
 		G_DoLoadLevel(resetplayer);

@@ -44,7 +44,19 @@ extern UINT8 globalweather;
 extern INT32 curWeather;
 extern INT32 cursaveslot;
 extern INT16 lastmapsaved;
-extern boolean gamecomplete;
+extern UINT8 gamecomplete;
+
+// Extra abilities/settings for skins (combinable stuff)
+typedef enum
+{
+	MA_RUNNING     = 1,    // In action
+	MA_INIT        = 1<<1, // Initialisation
+	MA_NOCUTSCENES = 1<<2, // No cutscenes
+	MA_INGAME      = 1<<3  // Timer ignores loads
+} marathonmode_t;
+
+extern marathonmode_t marathonmode;
+extern tic_t marathontime;
 
 #define PRECIP_NONE  0
 #define PRECIP_STORM 1
@@ -121,7 +133,7 @@ extern INT32 displayplayer;
 extern INT32 secondarydisplayplayer; // for splitscreen
 
 // Maps of special importance
-extern INT16 spstage_start;
+extern INT16 spstage_start, spmarathon_start;
 extern INT16 sstage_start;
 extern INT16 sstage_end;
 
@@ -220,6 +232,7 @@ typedef struct
 	UINT8 actnum;          ///< Act number or 0 for none.
 	UINT16 typeoflevel;    ///< Combination of typeoflevel flags.
 	INT16 nextlevel;       ///< Map number of next level, or 1100-1102 to end.
+	INT16 marathonnext;    ///< See nextlevel, but for Marathon mode. Necessary to support hub worlds ala SUGOI.
 	char musname[7];       ///< Music track to play. "" for no music.
 	UINT16 mustrack;       ///< Subsong to play. Only really relevant for music modules and specific formats supported by GME. 0 to ignore.
 	UINT32 muspos;    ///< Music position to jump to.
@@ -506,4 +519,3 @@ extern INT32 adminplayers[MAXPLAYERS];
 /// \note put these in d_clisrv outright?
 
 #endif //__DOOMSTAT__
-
