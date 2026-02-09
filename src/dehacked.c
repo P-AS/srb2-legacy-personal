@@ -1039,6 +1039,22 @@ static void readlevelheader(MYFILE *f, INT32 num)
 
 				mapheaderinfo[num-1]->nextlevel = (INT16)i;
 			}
+			else if (fastcmp(word, "MARATHONNEXT"))
+			{
+				if      (fastcmp(word2, "TITLE"))      i = 1100;
+				else if (fastcmp(word2, "EVALUATION")) i = 1101;
+				else if (fastcmp(word2, "CREDITS"))    i = 1102;
+				else if (fastcmp(word2, "ENDING"))     i = 1103;
+				else
+				// Support using the actual map name,
+				// i.e., MarathonNext = AB, MarathonNext = FZ, etc.
+
+				// Convert to map number
+				if (word2[0] >= 'A' && word2[0] <= 'Z' && word2[2] == '\0')
+					i = M_MapNumber(word2[0], word2[1]);
+
+				mapheaderinfo[num-1]->marathonnext = (INT16)i;
+			}
 			else if (fastcmp(word, "TYPEOFLEVEL"))
 			{
 				if (i) // it's just a number
@@ -2822,7 +2838,20 @@ static void readmaincfg(MYFILE *f)
 					value = get_number(word2);
 
 
-				spstage_start = (INT16)value;
+				spstage_start = spmarathon_start = (INT16)value;
+			}
+			else if (fastcmp(word, "SPMARATHON_START"))
+			{
+				// Support using the actual map name,
+				// i.e., Level AB, Level FZ, etc.
+
+				// Convert to map number
+				if (word2[0] >= 'A' && word2[0] <= 'Z')
+					value = M_MapNumber(word2[0], word2[1]);
+				else
+					value = get_number(word2);
+
+				spmarathon_start = (INT16)value;
 			}
 			else if (fastcmp(word, "SSTAGE_START"))
 			{
@@ -2914,6 +2943,13 @@ static void readmaincfg(MYFILE *f)
 					introtoplay = 128;
 				introchanged = true;
 			}
+			else if (fastcmp(word, "CREDITSCUTSCENE"))
+			{
+				creditscutscene = (UINT8)get_number(word2);
+				// range check, you morons.
+				if (creditscutscene > 128)
+					creditscutscene = 128;
+			}
 			else if (fastcmp(word, "LOOPTITLE"))
 			{
 
@@ -2925,14 +2961,6 @@ static void readmaincfg(MYFILE *f)
 
 				titlescrollspeed = get_number(word2);
 				titlechanged = true;
-			}
-			else if (fastcmp(word, "CREDITSCUTSCENE"))
-			{
-
-				creditscutscene = (UINT8)get_number(word2);
-				// range check, you morons.
-				if (creditscutscene > 128)
-					creditscutscene = 128;
 			}
 			else if (fastcmp(word, "DISABLESPEEDADJUST"))
 			{
@@ -7288,6 +7316,11 @@ struct {
 	{"V_CHARCOLORSHIFT",V_CHARCOLORSHIFT},
 	{"V_ALPHASHIFT",V_ALPHASHIFT},
 
+	// marathonmode flags
+	//{"MA_INIT",MA_INIT}, -- should never see this
+	{"MA_RUNNING",MA_RUNNING},
+	{"MA_NOCUTSCENES",MA_NOCUTSCENES},
+
 	//Kick Reasons
 	{"KR_KICK",KR_KICK},
 	{"KR_PINGLIMIT",KR_PINGLIMIT},
@@ -7934,7 +7967,13 @@ static inline int lib_getenum(lua_State *L)
 		lua_pushboolean(L, splitscreen);
 		return 1;
 	} else if (fastcmp(word,"gamecomplete")) {
-		lua_pushboolean(L, gamecomplete);
+		lua_pushboolean(L, (gamecomplete != 0));
+		return 1;
+	} else if (fastcmp(word,"marathonmode")) {
+		lua_pushinteger(L, marathonmode);
+		return 1;
+	} else if (fastcmp(word,"spmarathon_start")) {
+		lua_pushinteger(L, spmarathon_start);
 		return 1;
 	} else if (fastcmp(word,"devparm")) {
 		lua_pushboolean(L, devparm);

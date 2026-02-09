@@ -1125,10 +1125,6 @@ void F_StartCredits(void)
 	// Just in case they're open ... somehow
 	M_ClearMenus(true);
 
-	// Save the second we enter the credits
-	if ((!modifiedgame || savemoddata) && !(netgame || multiplayer) && cursaveslot >= 0)
-		G_SaveGame((UINT32)cursaveslot);
-
 	if (creditscutscene)
 	{
 		F_StartCustomCutscene(creditscutscene - 1, false, false);
@@ -1294,12 +1290,6 @@ void F_StartGameEvaluation(void)
 	// Just in case they're open ... somehow
 	M_ClearMenus(true);
 
-	// Save the second we enter the evaluation
-	// We need to do this again!  Remember, it's possible a mod designed skipped
-	// the credits sequence!
-	if ((!modifiedgame || savemoddata) && !(netgame || multiplayer) && cursaveslot >= 0)
-		G_SaveGame((UINT32)cursaveslot);
-
 	gameaction = ga_nothing;
 	paused = false;
 	CON_ToggleOff();
@@ -1319,6 +1309,8 @@ void F_GameEvaluationDrawer(void)
 	// Draw all the good crap here.
 	if (ALL7EMERALDS(emeralds))
 		V_DrawString(114, 16, 0, "GOT THEM ALL!");
+	else if (marathonmode)
+		V_DrawString(114, 16, 0, "THANKS FOR THE RUN!");
 	else
 		V_DrawString(124, 16, 0, "TRY AGAIN!");
 
@@ -1382,6 +1374,14 @@ void F_GameEvaluationDrawer(void)
 			V_DrawString(8, 96, V_YELLOWMAP, "Prizes only\nawarded in\nsingle player!");
 		else
 			V_DrawString(8, 96, V_YELLOWMAP, "Prizes not\nawarded in\nmodified games!");
+	}
+	if (marathonmode)
+	{
+		const char *rtatext, *cuttext, *endingtext;
+		rtatext = (marathonmode & Playing()) ? "In-game timer" : "RTA timer";
+		cuttext = (marathonmode & MA_NOCUTSCENES) ? "" : " w/ cutscenes";
+		endingtext = va("%s, %s%s", skins[players[consoleplayer].skin].realname, rtatext, cuttext);
+		V_DrawCenteredString(BASEVIDWIDTH/2, 182, V_SNAPTOBOTTOM|(ultimatemode ? V_REDMAP : V_YELLOWMAP), endingtext);
 	}
 }
 
