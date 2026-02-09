@@ -7317,9 +7317,10 @@ struct {
 	{"V_ALPHASHIFT",V_ALPHASHIFT},
 
 	// marathonmode flags
-	//{"MA_INIT",MA_INIT}, -- should never see this
+	{"MA_INIT",MA_INIT},
 	{"MA_RUNNING",MA_RUNNING},
 	{"MA_NOCUTSCENES",MA_NOCUTSCENES},
+	{"MA_INGAME",MA_INGAME},
 
 	//Kick Reasons
 	{"KR_KICK",KR_KICK},

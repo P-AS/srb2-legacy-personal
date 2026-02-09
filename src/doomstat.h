@@ -51,7 +51,8 @@ typedef enum
 {
 	MA_RUNNING     = 1,    // In action
 	MA_INIT        = 1<<1, // Initialisation
-	MA_NOCUTSCENES = 1<<2  // No cutscenes
+	MA_NOCUTSCENES = 1<<2, // No cutscenes
+	MA_INGAME      = 1<<3  // Timer ignores loads
 } marathonmode_t;
 
 extern marathonmode_t marathonmode;
@@ -518,4 +519,3 @@ extern INT32 adminplayers[MAXPLAYERS];
 /// \note put these in d_clisrv outright?
 
 #endif //__DOOMSTAT__
-

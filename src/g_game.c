@@ -1859,6 +1859,10 @@ void G_Ticker(boolean run)
 	UINT32 i;
 	INT32 buf;
 
+	// see also SCR_DisplayMarathonInfo
+	if ((marathonmode & (MA_INIT|MA_INGAME)) == MA_INGAME && gamestate == GS_LEVEL)
+		marathontime++;
+
 	P_MapStart();
 	// do player reborns if needed
 	if (gamestate == GS_LEVEL)
@@ -1868,8 +1872,13 @@ void G_Ticker(boolean run)
 		{
 			G_ClearRetryFlag();
 
-			// Costs a life to retry ... unless the player in question is dead already.
-			if (G_GametypeUsesLives() && players[consoleplayer].playerstate == PST_LIVE)
+			// Costs a life to retry ... unless the player in question is dead already, or you haven't even touched the first starpost in marathon run.
+			if (marathonmode && gamemap == spmarathon_start && !players[consoleplayer].starposttime)
+			{
+				marathonmode |= MA_INIT;
+				marathontime = 0;
+			}
+			else if (G_GametypeUsesLives() && players[consoleplayer].playerstate == PST_LIVE)
 				players[consoleplayer].lives -= 1;
 
 			G_DoReborn(consoleplayer);
@@ -2491,7 +2500,7 @@ void G_DoReborn(INT32 playernum)
 			player->starpostz = 0;
 			player->starpostnum = 0;
 		}
-		if (!countdowntimeup && (mapheaderinfo[gamemap-1]->levelflags & LF_NORELOAD))
+		if (!countdowntimeup && (mapheaderinfo[gamemap-1]->levelflags & LF_NORELOAD) && !(marathonmode & MA_INIT))
 		{
 			INT32 i;
 
