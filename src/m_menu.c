@@ -232,7 +232,6 @@ static void M_ModeAttackEndGame(INT32 choice);
 static void M_SetGuestReplay(INT32 choice);
 static void M_ChoosePlayer(INT32 choice);
 static void M_Marathon(INT32 choice);
-static void M_HandleMarathonChoosePlayer(INT32 choice);
 static void M_StartMarathon(INT32 choice);
 menu_t SP_LevelStatsDef;
 static menu_t SP_TimeAttackDef, SP_ReplayDef, SP_GuestReplayDef, SP_GhostDef;
@@ -5964,7 +5963,7 @@ static void M_ChoosePlayer(INT32 choice)
 {
 	char *skin1,*skin2;
 	INT32 skinnum;
-	boolean ultmode = (currentMenu == &SP_MarathonDef) ? (cv_dummymarathon.value == 2) : (ultimate_selectable && SP_PlayerDef.prevMenu == &SP_LoadDef && saveSlotSelected == NOSAVESLOT);
+	boolean ultmode = (currentMenu == &SP_MarathonDef) ? (cv_dummymarathon.value == 1) : (ultimate_selectable && SP_PlayerDef.prevMenu == &SP_LoadDef && saveSlotSelected == NOSAVESLOT);
 
 	// skip this if forcecharacter
 	if (mapheaderinfo[startmap-1] && mapheaderinfo[startmap-1]->forcecharacter[0] == '\0')
@@ -6865,11 +6864,7 @@ static void M_StartMarathon(INT32 choice)
 void M_DrawMarathon(void)
 {
 	INT32 i, x, y, cursory = 0, cnt, soffset = 0, w;
-	int ROIDANIM = 0; // black rock animation replacing 2.2's eggrock
 	UINT16 dispstatus;
-	consvar_t *cv;
-	const char *cvstring;
-	char *work;
 	angle_t fa;
 	patch_t *PictureOfUrFace;
 	INT32 dupz = (vid.dupx < vid.dupy ? vid.dupx : vid.dupy), xspan = (vid.width/dupz), yspan = (vid.height/dupz), diffx = (xspan - BASEVIDWIDTH)/2, diffy = (yspan - BASEVIDHEIGHT)/2, maxy = BASEVIDHEIGHT + diffy;
@@ -6892,13 +6887,8 @@ void M_DrawMarathon(void)
 		recatkdrawtimer += FRACUNIT;
 	}
 
-	if (ROIDANIM <= 34) // 1 frame per tic
-		ROIDANIM++;
-	else
-		ROIDANIM = 0;
-
-	char ROIDPATCH[16];
-	INT32 ROIDFRAME = (gametic / 4) % 35;
+	char ROIDPATCH[16]; // black rock animation replacing 2.2's eggrock
+	INT32 ROIDFRAME = (gametic / 4) % 35; // 1 frame every 4 tics
 	snprintf(ROIDPATCH, sizeof(ROIDPATCH), "ROID%04d", ROIDFRAME);
 
 
