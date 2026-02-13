@@ -589,7 +589,7 @@ void HWR_FadeScreenMenuBack(UINT16 color, UINT8 strength)
 }
 
 // Draw the console background with translucency support
-void HWR_DrawConsoleBack(UINT32 color, INT32 height)
+void HWR_DrawConsoleBack(UINT32 color, INT32 height, UINT8 alpha)
 {
 	FOutVector  v[4];
 	FSurfaceInfo Surf;
@@ -610,7 +610,7 @@ void HWR_DrawConsoleBack(UINT32 color, INT32 height)
 	v[2].t = v[3].t = 0.0f;
 
 	Surf.PolyColor.rgba = UINT2RGBA(color);
-	Surf.PolyColor.s.alpha = 0x80;
+	Surf.PolyColor.s.alpha = alpha;
 
 	HWD.pfnDrawPolygon(&Surf, v, 4, PF_NoTexture|PF_Modulated|PF_Translucent|PF_NoDepthTest);
 }
@@ -773,7 +773,7 @@ void HWR_drawAMline(const fline_t *fl, INT32 color)
 // -------------------+
 // HWR_DrawConsoleFill     : draw flat coloured transparent rectangle because that's cool, and hw sucks less than sw for that.
 // -------------------+
-void HWR_DrawConsoleFill(INT32 x, INT32 y, INT32 w, INT32 h, UINT32 color, INT32 options)
+void HWR_DrawConsoleFill(INT32 x, INT32 y, INT32 w, INT32 h, UINT32 color, INT32 options, UINT8 alpha)
 {
 	FOutVector v[4];
 	FSurfaceInfo Surf;
@@ -869,7 +869,7 @@ void HWR_DrawConsoleFill(INT32 x, INT32 y, INT32 w, INT32 h, UINT32 color, INT32
 	v[2].t = v[3].t = 1.0f;
 
 	Surf.PolyColor.rgba = UINT2RGBA(color);
-	Surf.PolyColor.s.alpha = 0x80;
+	Surf.PolyColor.s.alpha = alpha;
 
 	HWD.pfnDrawPolygon(&Surf, v, 4, PF_NoTexture|PF_Modulated|PF_Translucent|PF_NoDepthTest);
 }
