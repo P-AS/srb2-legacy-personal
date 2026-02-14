@@ -1521,6 +1521,20 @@ void VID_CheckRenderer(void)
 		rendermode = setrenderneeded;
 		rendererchanged = true;
 
+		// Destroy the current window, if it exists.
+		if (window)
+		{
+			SDL_DestroyWindow(window);
+			window = NULL;
+		}
+
+		// Destroy the current window rendering context, if that also exists.
+		if (renderer)
+		{
+			SDL_DestroyRenderer(renderer);
+			renderer = NULL;
+		}
+
 #ifdef HWRENDER
 		if (rendermode == render_opengl)
 		{
@@ -1534,23 +1548,6 @@ void VID_CheckRenderer(void)
 				// Loaded successfully!
 				if (vid.glstate == VID_GL_LIBRARY_LOADED)
 				{
-					// Destroy the current window, if it exists.
-					if (window)
-					{
-						SDL_DestroyWindow(window);
-						window = NULL;
-					}
-
-					// Destroy the current window rendering context, if that also exists.
-					if (renderer)
-					{
-						SDL_DestroyRenderer(renderer);
-						renderer = NULL;
-					}
-
-					// Create a new window.
-					Impl_CreateWindow(USE_FULLSCREEN);
-
 					// From there, the OpenGL context was already created.
 					contextcreated = true;
 				}
@@ -1561,7 +1558,11 @@ void VID_CheckRenderer(void)
 #endif
 
 		if (!contextcreated)
+		{
+			// Create a new window.
+			Impl_CreateWindow(USE_FULLSCREEN);
 			Impl_CreateContext();
+		}
 
 		setrenderneeded = 0;
 	}
