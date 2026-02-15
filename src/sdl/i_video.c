@@ -1507,6 +1507,23 @@ void VID_CheckGLLoaded(rendermode_t oldrender)
 #endif
 }
 
+static void Impl_DestroyWindow(void)
+{
+	// Destroy the current window, if it exists.
+	if (window)
+	{
+		SDL_DestroyWindow(window);
+		window = NULL;
+	}
+
+	// Destroy the current window rendering context, if that also exists.
+	if (renderer)
+	{
+		SDL_DestroyRenderer(renderer);
+		renderer = NULL;
+	}
+}
+
 void VID_CheckRenderer(void)
 {
 	boolean rendererchanged = false;
@@ -1521,6 +1538,11 @@ void VID_CheckRenderer(void)
 		rendermode = setrenderneeded;
 		rendererchanged = true;
 
+#ifdef __APPLE__
+		// macOS needs the window and rendering context to be remade on every renderer switch, or else the video will freeze.
+		Impl_DestroyWindow();
+#endif
+
 #ifdef HWRENDER
 		if (rendermode == render_opengl)
 		{
@@ -1534,34 +1556,28 @@ void VID_CheckRenderer(void)
 				// Loaded successfully!
 				if (vid.glstate == VID_GL_LIBRARY_LOADED)
 				{
-					// Destroy the current window, if it exists.
-					if (window)
-					{
-						SDL_DestroyWindow(window);
-						window = NULL;
-					}
-
-					// Destroy the current window rendering context, if that also exists.
-					if (renderer)
-					{
-						SDL_DestroyRenderer(renderer);
-						renderer = NULL;
-					}
+#ifndef __APPLE__
+					Impl_DestroyWindow();
 
 					// Create a new window.
 					Impl_CreateWindow(USE_FULLSCREEN);
 
 					// From there, the OpenGL context was already created.
 					contextcreated = true;
+#endif // __APPLE__
 				}
 			}
 			else if (vid.glstate == VID_GL_LIBRARY_ERROR)
 				rendererchanged = false;
 		}
-#endif
+#endif // HWRENDER
 
 		if (!contextcreated)
+		{
+			// Create a new window.
+			Impl_CreateWindow(USE_FULLSCREEN);
 			Impl_CreateContext();
+		}
 
 		setrenderneeded = 0;
 	}
@@ -1594,7 +1610,6 @@ void VID_CheckRenderer(void)
 	(void)oldrenderer;
 #endif
 }
-
 
 INT32 VID_SetMode(INT32 modeNum)
 {
