@@ -1509,6 +1509,7 @@ void VID_CheckGLLoaded(rendermode_t oldrender)
 #endif
 }
 
+#ifdef HWRENDER
 static void Impl_DestroyWindow(void)
 {
 	// Destroy the current window, if it exists.
@@ -1525,6 +1526,7 @@ static void Impl_DestroyWindow(void)
 		renderer = NULL;
 	}
 }
+#endif
 
 void VID_CheckRenderer(void)
 {
@@ -1540,7 +1542,7 @@ void VID_CheckRenderer(void)
 		rendermode = setrenderneeded;
 		rendererchanged = true;
 
-#ifdef __APPLE__
+#if defined(__APPLE__) && defined(HWRENDER)
 		// macOS needs the window and rendering context to be remade on every renderer switch, or else the video will freeze.
 		Impl_DestroyWindow();
 #endif
