@@ -642,6 +642,6 @@ void SCR_DisplayMarathonInfo(void)
 	V_DrawFill(BASEVIDWIDTH-((antisplice[1]/PRIMEV1)),   BASEVIDHEIGHT-8, 1, 8, V_SNAPTOBOTTOM|V_SNAPTORIGHT|31);
 #undef PRIMEV1
 #undef PRIMEV2
-	V_DrawFillConsoleMap(-100, 200, 500, 300, cons_backcolor.value);
+	V_DrawFillConsoleMap(-500, BASEVIDHEIGHT-8, BASEVIDWIDTH+500, 8, V_SNAPTOBOTTOM|V_SNAPTORIGHT|cons_backcolor.value);
 	V_DrawCenteredString(BASEVIDWIDTH/2, BASEVIDHEIGHT-8, flags, str);
 }
