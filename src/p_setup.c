@@ -184,6 +184,8 @@ static void P_ClearSingleMapHeaderInfo(INT16 i)
 
 	mapheaderinfo[num]->nextlevel = (INT16)(i + 1);
 
+	mapheaderinfo[num]->marathonnext = 0;
+
 	snprintf(mapheaderinfo[num]->musname, 7, "%sM", G_BuildMapName(i));
 	mapheaderinfo[num]->musname[6] = 0;
 
@@ -2969,7 +2971,7 @@ boolean P_SetupLevel(boolean skipprecip, boolean reloadinggamestate)
 	globalweather = mapheaderinfo[gamemap-1]->weather;
 
 #ifdef HWRENDER // not win32 only 19990829 by Kin
-	// Jimita: Free extrasubsectors regardless of renderer.
+	// Lactozilla: Free extrasubsectors regardless of renderer.
 	// Maybe we're not in OpenGL anymore.
 	if (extrasubsectors)
 		free(extrasubsectors);

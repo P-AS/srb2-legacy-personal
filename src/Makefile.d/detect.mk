@@ -8,7 +8,6 @@
 	DUMMY\
 	DJGPPDOS\
 	SOLARIS\
-	MACOSX\
 
 all_systems:=\
 	LINUX64\
@@ -16,6 +15,7 @@ all_systems:=\
 	MINGW\
 	UNIX\
 	LINUX\
+	MACOS\
 	FREEBSD\
 	OPENBSD\
 	SDL\

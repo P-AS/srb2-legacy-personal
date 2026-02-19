@@ -796,6 +796,9 @@ void P_PreTicker(INT32 frames)
 
 	postimgtype = postimgtype2 = postimg_none;
 
+	if (marathonmode & MA_INGAME)
+		marathonmode |= MA_INIT;
+
 	for (framecnt = 0; framecnt < frames; ++framecnt)
 	{
 		P_MapStart();
@@ -839,9 +842,12 @@ void P_PreTicker(INT32 frames)
 		R_UpdateLevelInterpolators();
 		R_UpdateViewInterpolation();
 		R_ResetViewInterpolation(0);
-		
+
 		LUAh_PostThinkFrame();
-		
+
 		P_MapEnd();
 	}
+
+	if (marathonmode & MA_INGAME)
+		marathonmode &= ~MA_INIT;
 }

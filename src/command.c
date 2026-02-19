@@ -48,6 +48,7 @@ static void COM_CEchoDuration_f(void);
 static void COM_Exec_f(void);
 static void COM_Wait_f(void);
 static void COM_Help_f(void);
+static void COM_Find_f(void);
 static void COM_Toggle_f(void);
 static void COM_Add_f(void);
 
@@ -292,6 +293,7 @@ void COM_Init(void)
 	COM_AddCommand("exec", NULL, COM_Exec_f);
 	COM_AddCommand("wait", NULL, COM_Wait_f);
 	COM_AddCommand("help", NULL,  COM_Help_f);
+	COM_AddCommand("find", NULL,  COM_Find_f);
 	COM_AddCommand("toggle", NULL, COM_Toggle_f);
 	COM_AddCommand("add", NULL, COM_Add_f);
 	RegisterNetXCmd(XD_NETVAR, Got_NetVar);
@@ -794,31 +796,8 @@ static void COM_Help_f(void)
 				return;
 			}
 
-			CONS_Printf("No exact match, searching...\n");
-
-			// variables
-			CONS_Printf("\x82""Variables:\n");
-			for (cvar = consvar_vars; cvar; cvar = cvar->next)
-			{
-				if ((cvar->flags & CV_NOSHOWHELP) || (!strstr(cvar->name, help)))
-					continue;
-				CONS_Printf("%s ", cvar->name);
-				i++;
-			}
-
-			// commands
-			CONS_Printf("\x82""\nCommands:\n");
-			for (cmd = com_commands; cmd; cmd = cmd->next)
-			{
-				if (!strstr(cmd->name, help))
-					continue;
-				CONS_Printf("%s ",cmd->name);
-				i++;
-			}
-
+			CONS_Printf("No variable or command named %s", help);
 			CONS_Printf("\x82""\nCheck wiki.srb2.org for more or type help <command or variable>\n");
-
-			CONS_Debug(DBG_GAMELOGIC, "\x87Total : %d\n", i);
 		}
 		return;
 	}
@@ -846,6 +825,76 @@ static void COM_Help_f(void)
 
 		CONS_Debug(DBG_GAMELOGIC, "\x82Total : %d\n", i);
 	}
+}
+
+static void COM_Find_f(void)
+{
+	static char prefix[80];
+	xcommand_t *cmd;
+	consvar_t *cvar;
+	cmdalias_t *alias;
+	const char *match;
+	const char *help;
+	size_t helplen;
+	boolean matchesany;
+
+	if (COM_Argc() != 2)
+	{
+		CONS_Printf(M_GetText("find <text>: Search for variables, commands and aliases containing <text>\n"));
+		return;
+	}
+
+	help = COM_Argv(1);
+	helplen = strlen(help);
+	CONS_Printf("\x82""Variables:\n");
+	matchesany = false;
+	for (cvar = consvar_vars; cvar; cvar = cvar->next)
+	{
+		if (cvar->flags & CV_NOSHOWHELP)
+			continue;
+		match = strstr(cvar->name, help);
+		if (match != NULL)
+		{
+			memcpy(prefix, cvar->name, match - cvar->name);
+			prefix[match - cvar->name] = '\0';
+			CONS_Printf("  %s\x83%s\x80%s\n", prefix, help, &match[helplen]);
+			matchesany = true;
+		}
+	}
+	if (!matchesany)
+		CONS_Printf("  (none)\n");
+
+	CONS_Printf("\x82""Commands:\n");
+	matchesany = false;
+	for (cmd = com_commands; cmd; cmd = cmd->next)
+	{
+		match = strstr(cmd->name, help);
+		if (match != NULL)
+		{
+			memcpy(prefix, cmd->name, match - cmd->name);
+			prefix[match - cmd->name] = '\0';
+			CONS_Printf("  %s\x83%s\x80%s\n", prefix, help, &match[helplen]);
+			matchesany = true;
+		}
+	}
+	if (!matchesany)
+		CONS_Printf("  (none)\n");
+
+	CONS_Printf("\x82""Aliases:\n");
+	matchesany = false;
+	for (alias = com_alias; alias; alias = alias->next)
+	{
+		match = strstr(alias->name, help);
+		if (match != NULL)
+		{
+			memcpy(prefix, alias->name, match - alias->name);
+			prefix[match - alias->name] = '\0';
+			CONS_Printf("  %s\x83%s\x80%s\n", prefix, help, &match[helplen]);
+			matchesany = true;
+		}
+	}
+	if (!matchesany)
+		CONS_Printf("  (none)\n");
 }
 
 

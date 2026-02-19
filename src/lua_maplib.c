@@ -261,6 +261,7 @@ enum mapheaderinfo_e
 	mapheaderinfo_musname,
 	mapheaderinfo_mustrack,
 	mapheaderinfo_muspos,
+	mapheaderinfo_marathonnext,
 	mapheaderinfo_musinterfadeout,
 	mapheaderinfo_musintername,
 	mapheaderinfo_forcecharacter,
@@ -1245,7 +1246,7 @@ static int ffloor_set(lua_State *L)
 
 	switch(field)
 	{
-	case ffloor_valid: // valid 
+	case ffloor_valid: // valid
 	case ffloor_tslope: // t_slope
 	case ffloor_bslope: // b_slope
 	case ffloor_sector: // sector
@@ -1533,6 +1534,9 @@ static int mapheaderinfo_get(lua_State *L)
 		break;
 	case mapheaderinfo_typeoflevel:
 		lua_pushinteger(L, header->typeoflevel);
+		break;
+	case mapheaderinfo_marathonnext:
+		lua_pushinteger(L, header->marathonnext);
 		break;
 	case mapheaderinfo_nextlevel:
 		lua_pushinteger(L, header->nextlevel);

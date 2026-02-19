@@ -30,6 +30,7 @@
 # LINUX=1, LINUX64=1
 # MINGW=1, MINGW64=1 - Windows (MinGW toolchain)
 # UNIX=1 - Generic Unix like system
+# MACOS=1
 # FREEBSD=1
 # OPENBSD=1
 # SDL=1 - Use SDL backend. SDL is the only backend though
@@ -312,8 +313,10 @@ unexport UPX
 
 # executable stripped of debugging symbols
 $(exe) : $(dbg) | $$(@D)/
+ifndef MACOS
 	$(.)$(OBJCOPY) --strip-debug $< $@
 	$(.)-$(OBJCOPY) --add-gnu-debuglink=$< $@
+endif
 ifdef UPX
 	$(call Echo,Compressing final executable...)
 	$(.)-$(upx) $@

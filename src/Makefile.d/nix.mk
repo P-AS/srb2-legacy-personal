@@ -33,3 +33,7 @@ endif
 ifdef OPENBSD
 libs+=-lexecinfo -lpthread
 endif
+
+ifdef MACOS
+libs+=-framework CoreFoundation
+endif
