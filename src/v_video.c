@@ -1047,7 +1047,8 @@ void V_DrawFillConsoleMap(INT32 x, INT32 y, INT32 w, INT32 h, INT32 c)
 	if (rendermode != render_soft && rendermode != render_none)
 	{
 		UINT32 hwcolor = V_GetHWConsBackColor();
-		HWR_DrawConsoleFill(x, y, w, h, hwcolor, c);	// we still use the regular color stuff but only for flags. actual draw color is "hwcolor" for this.
+		UINT8 alpha = (cons_backcolor.value == 1) ? 0xC0 : 0x80; // A hack to make black darker like in software
+		HWR_DrawConsoleFill(x, y, w, h, hwcolor, c, alpha);	// we still use the regular color stuff but only for flags. actual draw color is "hwcolor" for this.
 		return;
 	}
 #endif
@@ -1296,7 +1297,8 @@ void V_DrawFadeConsBack(INT32 plines)
 	if (rendermode != render_soft && rendermode != render_none)
 	{
 		UINT32 hwcolor = V_GetHWConsBackColor();
-		HWR_DrawConsoleBack(hwcolor, plines);
+		UINT8 alpha = (cons_backcolor.value == 1) ? 0xC0 : 0x80; // A hack to make black darker like in software
+		HWR_DrawConsoleBack(hwcolor, plines, alpha);
 		return;
 	}
 #endif

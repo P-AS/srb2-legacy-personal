@@ -15,6 +15,7 @@
 #include "screen.h"
 #include "console.h"
 #include "am_map.h"
+#include "g_game.h"
 #include "i_time.h"
 #include "i_system.h"
 #include "i_video.h"
@@ -150,7 +151,7 @@ void SCR_SetMode(void)
 	if (!(setmodeneeded || setrenderneeded) || WipeInAction)
 		return; // should never happen and don't change it during a wipe, BAD!
 
-	// Jimita
+	// Lactozilla: Renderer switching
 	if (setrenderneeded)
 	{
 		needpatchflush = true;
@@ -400,7 +401,7 @@ void SCR_ActuallyChangeRenderer(void)
 		setrenderneeded = 0;
 }
 
-// Jimita
+// Lactozilla: Renderer switching
 void SCR_ChangeRenderer(void)
 {
 	setrenderneeded = 0;
@@ -634,4 +635,52 @@ void SCR_DisplayLocalPing(void)
 
 		HU_drawPing(307, dispy, ping, packetloss, true, transflag|V_SNAPTORIGHT|V_SNAPTOBOTTOM);
 	}
+}
+
+void SCR_DisplayMarathonInfo(void)
+{
+	INT32 flags = V_SNAPTOBOTTOM;
+	static tic_t entertic, oldentertics = 0, antisplice[2] = {48,0};
+	const char *str;
+#if 0 // eh, this probably isn't going to be a problem
+	if (((signed)marathontime) < 0)
+	{
+		flags |= V_REDMAP;
+		str = "No waiting out the clock to submit a bogus time.";
+	}
+	else
+#endif
+	{
+		entertic = I_GetTime();
+		if (gamecomplete)
+			flags |= V_YELLOWMAP;
+		else if (marathonmode & MA_INGAME)
+			; // see also G_Ticker
+		else if (marathonmode & MA_INIT)
+			marathonmode &= ~MA_INIT;
+		else
+			marathontime += entertic - oldentertics;
+
+		// Create a sequence of primes such that their LCM is nice and big.
+#define PRIMEV1 13
+#define PRIMEV2 17 // I can't believe it! I'm on TV!
+		antisplice[0] += (entertic - oldentertics)*PRIMEV2;
+		antisplice[0] %= PRIMEV1*((vid.width/vid.dupx)+1);
+		antisplice[1] += (entertic - oldentertics)*PRIMEV1;
+		antisplice[1] %= PRIMEV1*((vid.width/vid.dupx)+1);
+		str = va("%i:%02i:%02i.%02i",
+			G_TicsToHours(marathontime),
+			G_TicsToMinutes(marathontime, false),
+			G_TicsToSeconds(marathontime),
+			G_TicsToCentiseconds(marathontime));
+		oldentertics = entertic;
+	}
+	V_DrawFill((antisplice[0]/PRIMEV1)-1, BASEVIDHEIGHT-8, 1, 8, V_SNAPTOBOTTOM|V_SNAPTOLEFT);
+	V_DrawFill((antisplice[0]/PRIMEV1),   BASEVIDHEIGHT-8, 1, 8, V_SNAPTOBOTTOM|V_SNAPTOLEFT|31);
+	V_DrawFill(BASEVIDWIDTH-((antisplice[1]/PRIMEV1)-1), BASEVIDHEIGHT-8, 1, 8, V_SNAPTOBOTTOM|V_SNAPTORIGHT);
+	V_DrawFill(BASEVIDWIDTH-((antisplice[1]/PRIMEV1)),   BASEVIDHEIGHT-8, 1, 8, V_SNAPTOBOTTOM|V_SNAPTORIGHT|31);
+#undef PRIMEV1
+#undef PRIMEV2
+	V_DrawFillConsoleMap(-500, BASEVIDHEIGHT-8, BASEVIDWIDTH+500, 8, V_SNAPTOBOTTOM|V_SNAPTORIGHT|cons_backcolor.value);
+	V_DrawCenteredString(BASEVIDWIDTH/2, BASEVIDHEIGHT-8, flags, str);
 }
