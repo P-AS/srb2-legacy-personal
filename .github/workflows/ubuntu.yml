@@ -28,7 +28,7 @@ jobs:
 
     - name: Install dependencies
       run: |
-       sudo apt-get update 
+       sudo apt-get update
        sudo apt install -y libsdl2-mixer-dev libpng-dev libcurl4-openssl-dev libgme-dev libminiupnpc-dev libopenmpt-dev
 
     - name: Build SRB2 Legacy
@@ -36,8 +36,12 @@ jobs:
 
     - name: Package SRB2 Legacy AppImage
       run: |
-       chmod +x srb2-legacy-appimage.sh 
-       ./srb2-legacy-appimage.sh --noassets --skipbuild
+       chmod +x srb2-legacy-appimage.sh
+       if [[ "${{ github.ref == 'refs/heads/master' }}" == "true" ]]; then
+           ./srb2-legacy-appimage.sh --skipbuild
+       else
+           ./srb2-legacy-appimage.sh --noassets --skipbuild
+       fi
 
     - name: Upload build artifact
       uses: actions/upload-artifact@v6.0.0
