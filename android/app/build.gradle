@@ -1,19 +1,19 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 30
-    namespace 'org.stjr.srb2legacy'
+    compileSdkVersion = 30
+    namespace = 'org.stjr.srb2legacy'
     lintOptions {
-        abortOnError false
+        abortOnError = false
     }
     defaultConfig {
-        applicationId "org.stjr.srb2legacy"
+        applicationId = "org.stjr.srb2legacy"
 
-        minSdkVersion  28
-        targetSdkVersion 30
-        versionCode 2130
-        versionName "2.1.30"
-        ndkVersion "26.1.10909125"
+        minSdkVersion = 28
+        targetSdkVersion = 30
+        versionCode = 2130
+        versionName = "2.1.30"
+        ndkVersion = "26.1.10909125"
         externalNativeBuild {
             cmake {
                 abiFilters 'arm64-v8a'
@@ -44,10 +44,10 @@ android {
 
     externalNativeBuild {
         cmake {
-            path "../../CMakeLists.txt"
+            path = "../../CMakeLists.txt"
 
             // Using one top level build dir for all build related files to reduce clutter.
-            buildStagingDirectory file("${buildDir}/../.externalNativeBuild/${project.name}")
+            buildStagingDirectory = file("${buildDir}/../.externalNativeBuild/${project.name}")
         }
     }
 }
