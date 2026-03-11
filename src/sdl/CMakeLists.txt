@@ -29,7 +29,7 @@ set(SRB2_HAVE_MIXER ON)
 target_sources(SRB2SDL2 PRIVATE mixer_sound.c)
 set(SDL2_MIXER_FOUND ON)
 set(SDL2_MIXER_INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/thirdparty/SDL2_mixer/include/)
-set(SDL2_MIXER_LIBRARIES "-L${CMAKE_SOURCE_DIR}/thirdparty/SDL2_mixer/libs/arm64-v8a/ -lSDL2_mixer")
+set(SDL2_MIXER_LIBRARIES "-L${CMAKE_SOURCE_DIR}/thirdparty/SDL2_mixer/libs/${CMAKE_ANDROID_ARCH_ABI}/ -lSDL2_mixer")
 
 target_sourcefile(c)
 target_sources(SRB2SDL2 PRIVATE SDL_main/SDL_android_main.c)
@@ -53,7 +53,7 @@ target_sources(SRB2SDL2 PRIVATE ogl_sdl.c)
 
 set(SDL2_FOUND ON)
 set(SDL2_INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/thirdparty/SDL2/include)
-set(SDL2_LIBRARIES "-L${CMAKE_SOURCE_DIR}/thirdparty/SDL2_mixer/libs/arm64-v8a/ -lSDL2")
+set(SDL2_LIBRARIES "-L${CMAKE_SOURCE_DIR}/thirdparty/SDL2_mixer/libs/${CMAKE_ANDROID_ARCH_ABI}/ -lSDL2")
 
 if(${SDL2_FOUND})
 	if(${CMAKE_SYSTEM} MATCHES Windows)
@@ -91,8 +91,8 @@ if(${SDL2_FOUND})
 			RESOURCE "${CMAKE_CURRENT_SOURCE_DIR}/macosx/Srb2mac.icns"
 		)
 	endif()
-	target_link_libraries(SRB2SDL2 PRIVATE "${CMAKE_SOURCE_DIR}/thirdparty/SDL2/libs/arm64-v8a/libSDL2.so")
-	target_link_libraries(SRB2SDL2 PRIVATE "${CMAKE_SOURCE_DIR}/thirdparty/SDL2_mixer/libs/arm64-v8a/libSDL2_mixer.so" "${CMAKE_SOURCE_DIR}/thirdparty/SDL2_mixer/libs/arm64-v8a/libmpg123.so")
+	target_link_libraries(SRB2SDL2 PRIVATE "${CMAKE_SOURCE_DIR}/thirdparty/SDL2/libs/${CMAKE_ANDROID_ARCH_ABI}/libSDL2.so")
+	target_link_libraries(SRB2SDL2 PRIVATE "${CMAKE_SOURCE_DIR}/thirdparty/SDL2_mixer/libs/${CMAKE_ANDROID_ARCH_ABI}/libSDL2_mixer.so" "${CMAKE_SOURCE_DIR}/thirdparty/SDL2_mixer/libs/${CMAKE_ANDROID_ARCH_ABI}/libmpg123.so")
 	target_link_libraries(SRB2SDL2 PRIVATE
 		${SDL2_MIXER_LIBRARIES}
 		${GME_LIBRARIES}
