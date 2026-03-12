@@ -1125,6 +1125,10 @@ void F_StartCredits(void)
 	// Just in case they're open ... somehow
 	M_ClearMenus(true);
 
+	// Save the second we enter the credits
+	if ((!modifiedgame || savemoddata) && !(netgame || multiplayer) && !marathonmode && cursaveslot >= 0)
+		G_SaveGame((UINT32)cursaveslot);
+
 	if (creditscutscene)
 	{
 		F_StartCustomCutscene(creditscutscene - 1, false, false);
@@ -1289,6 +1293,12 @@ void F_StartGameEvaluation(void)
 
 	// Just in case they're open ... somehow
 	M_ClearMenus(true);
+
+	// Save the second we enter the evaluation
+	// We need to do this again!  Remember, it's possible a mod designed skipped
+	// the credits sequence!
+	if ((!modifiedgame || savemoddata) && !(netgame || multiplayer) && !marathonmode && cursaveslot >= 0)
+		G_SaveGame((UINT32)cursaveslot);
 
 	gameaction = ga_nothing;
 	paused = false;
