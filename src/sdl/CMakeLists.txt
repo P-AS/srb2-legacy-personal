@@ -2,58 +2,62 @@
 
 set(SRB2_CONFIG_SDL2_USEMIXER ON CACHE BOOL "Use SDL2_mixer or regular sdl sound")
 
-#if(${SRB2_CONFIG_SDL2_USEMIXER})
-#	if(${SRB2_CONFIG_USE_INTERNAL_LIBRARIES})
-#		set(SDL2_MIXER_FOUND ON)
-#		if(${SRB2_SYSTEM_BITS} EQUAL 64)
-#			set(SDL2_MIXER_INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/libs/SDL2_mixer/x86_64-w64-mingw32/include/SDL2)
-#			set(SDL2_MIXER_LIBRARIES "-L${CMAKE_SOURCE_DIR}/libs/SDL2_mixer/x86_64-w64-mingw32/lib -lSDL2_mixer")
-#		else() # 32-bit
-#			set(SDL2_MIXER_INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/libs/SDL2_mixer/i686-w64-mingw32/include/SDL2)
-#			set(SDL2_MIXER_LIBRARIES "-L${CMAKE_SOURCE_DIR}/libs/SDL2_mixer/i686-w64-mingw32/lib -lSDL2_mixer")
-#		endif()
-#	else()
-#	endif()
-#	if(${SDL2_MIXER_FOUND})
-#		set(SRB2_HAVE_MIXER ON)
-#		target_sources(SRB2SDL2 PRIVATE mixer_sound.c)
-#	else()
-#		message(WARNING "You specified that SDL2_mixer is available, but it was not found. Falling back to sdl sound.")
-#		target_sources(SRB2SDL2 PRIVATE sdl_sound.c)
-#	endif()
-#else()
-#	target_sources(SRB2SDL2 PRIVATE sdl_sound.c)
-#endif()
-
-set(SRB2_HAVE_MIXER ON)
-target_sources(SRB2SDL2 PRIVATE mixer_sound.c)
-set(SDL2_MIXER_FOUND ON)
-set(SDL2_MIXER_INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/thirdparty/SDL2_mixer/include/)
-set(SDL2_MIXER_LIBRARIES "-L${CMAKE_SOURCE_DIR}/thirdparty/SDL2_mixer/libs/${CMAKE_ANDROID_ARCH_ABI}/ -lSDL2_mixer")
+if(${SRB2_CONFIG_SDL2_USEMIXER})
+	if(${SRB2_CONFIG_USE_INTERNAL_LIBRARIES})
+		set(SDL2_MIXER_FOUND ON)
+		if(${CMAKE_SYSTEM} MATCHES "Windows")
+			if(${SRB2_SYSTEM_BITS} EQUAL 64)
+				set(SDL2_MIXER_INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/libs/SDL2_mixer/x86_64-w64-mingw32/include/SDL2)
+				set(SDL2_MIXER_LIBRARIES "-L${CMAKE_SOURCE_DIR}/libs/SDL2_mixer/x86_64-w64-mingw32/lib -lSDL2_mixer")
+			else() # 32-bit
+				set(SDL2_MIXER_INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/libs/SDL2_mixer/i686-w64-mingw32/include/SDL2)
+				set(SDL2_MIXER_LIBRARIES "-L${CMAKE_SOURCE_DIR}/libs/SDL2_mixer/i686-w64-mingw32/lib -lSDL2_mixer")
+			endif()
+		elseif(${CMAKE_SYSTEM} MATCHES "Android")
+			set(SDL2_MIXER_INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/thirdparty/SDL2_mixer/include/)
+			set(SDL2_MIXER_LIBRARIES "-L${CMAKE_SOURCE_DIR}/thirdparty/SDL2_mixer/libs/${CMAKE_ANDROID_ARCH_ABI}/ -lSDL2_mixer")
+		endif()
+	else()
+		find_package(SDL2_mixer)
+	endif()
+	if(${SDL2_MIXER_FOUND})
+		set(SRB2_HAVE_MIXER ON)
+		target_sources(SRB2SDL2 PRIVATE mixer_sound.c)
+	else()
+		message(WARNING "You specified that SDL2_mixer is available, but it was not found. Falling back to sdl sound.")
+		target_sources(SRB2SDL2 PRIVATE sdl_sound.c)
+	endif()
+else()
+	target_sources(SRB2SDL2 PRIVATE sdl_sound.c)
+endif()
 
 target_sourcefile(c)
-target_sources(SRB2SDL2 PRIVATE SDL_main/SDL_android_main.c)
+
+if(${CMAKE_SYSTEM} MATCHES "Android")
+	target_sources(SRB2SDL2 PRIVATE SDL_main/SDL_android_main.c)
+endif()
 
 target_sources(SRB2SDL2 PRIVATE ogl_sdl.c)
 
 # Dependency
-#if(${SRB2_CONFIG_USE_INTERNAL_LIBRARIES})
-#	set(SDL2_FOUND ON)
-#	if(${SRB2_SYSTEM_BITS} EQUAL 64)
-#		set(SDL2_INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/libs/SDL2/x86_64-w64-mingw32/include/SDL2)
-#		set(SDL2_LIBRARIES "-L${CMAKE_SOURCE_DIR}/libs/SDL2/x86_64-w64-mingw32/lib -lSDL2")
-#	else() # 32-bit
-#		set(SDL2_INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/libs/SDL2/i686-w64-mingw32/include/SDL2)
-#		set(SDL2_LIBRARIES "-L${CMAKE_SOURCE_DIR}/libs/SDL2/i686-w64-mingw32/lib -lSDL2")
-#	endif()
-#else()
-#	find_package(SDL2 CONFIG REQUIRED)
-#	find_package(SDL2 REQUIRED)
-#endif()
-
-set(SDL2_FOUND ON)
-set(SDL2_INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/thirdparty/SDL2/include)
-set(SDL2_LIBRARIES "-L${CMAKE_SOURCE_DIR}/thirdparty/SDL2_mixer/libs/${CMAKE_ANDROID_ARCH_ABI}/ -lSDL2")
+if(${SRB2_CONFIG_USE_INTERNAL_LIBRARIES})
+	set(SDL2_FOUND ON)
+	if(${CMAKE_SYSTEM} MATCHES "Windows")
+		if(${SRB2_SYSTEM_BITS} EQUAL 64)
+			set(SDL2_INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/libs/SDL2/x86_64-w64-mingw32/include/SDL2)
+			set(SDL2_LIBRARIES "-L${CMAKE_SOURCE_DIR}/libs/SDL2/x86_64-w64-mingw32/lib -lSDL2")
+		else() # 32-bit
+			set(SDL2_INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/libs/SDL2/i686-w64-mingw32/include/SDL2)
+			set(SDL2_LIBRARIES "-L${CMAKE_SOURCE_DIR}/libs/SDL2/i686-w64-mingw32/lib -lSDL2")
+		endif()
+	elseif(${CMAKE_SYSTEM} MATCHES "Android")
+		set(SDL2_INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/thirdparty/SDL2/include)
+		set(SDL2_LIBRARIES "-L${CMAKE_SOURCE_DIR}/thirdparty/SDL2_mixer/libs/${CMAKE_ANDROID_ARCH_ABI}/ -lSDL2")
+	endif()
+else()
+	find_package(SDL2 CONFIG REQUIRED)
+	find_package(SDL2 REQUIRED)
+endif()
 
 if(${SDL2_FOUND})
 	if(${CMAKE_SYSTEM} MATCHES Windows)
@@ -72,7 +76,15 @@ if(${SDL2_FOUND})
 		)
 	endif()
 
-	set_target_properties(SRB2SDL2 PROPERTIES OUTPUT_NAME main)
+	if(${CMAKE_SYSTEM} MATCHES "Windows")
+		set_target_properties(SRB2SDL2 PROPERTIES OUTPUT_NAME srb2legacywin)
+	elseif(${CMAKE_SYSTEM} MATCHES "Linux")
+		set_target_properties(SRB2SDL2 PROPERTIES OUTPUT_NAME lsdl2srb2legacy)
+	elseif(${CMAKE_SYSTEM} MATCHES "Android")
+		set_target_properties(SRB2SDL2 PROPERTIES OUTPUT_NAME main)
+	else()
+		set_target_properties(SRB2SDL2 PROPERTIES OUTPUT_NAME srb2legacy)
+	endif()
 
 	if(${CMAKE_SYSTEM} MATCHES Darwin)
 		find_library(CORE_FOUNDATION_LIBRARY "CoreFoundation")
@@ -91,18 +103,34 @@ if(${SDL2_FOUND})
 			RESOURCE "${CMAKE_CURRENT_SOURCE_DIR}/macosx/Srb2mac.icns"
 		)
 	endif()
-	target_link_libraries(SRB2SDL2 PRIVATE "${CMAKE_SOURCE_DIR}/thirdparty/SDL2/libs/${CMAKE_ANDROID_ARCH_ABI}/libSDL2.so")
-	target_link_libraries(SRB2SDL2 PRIVATE "${CMAKE_SOURCE_DIR}/thirdparty/SDL2_mixer/libs/${CMAKE_ANDROID_ARCH_ABI}/libSDL2_mixer.so" "${CMAKE_SOURCE_DIR}/thirdparty/SDL2_mixer/libs/${CMAKE_ANDROID_ARCH_ABI}/libmpg123.so")
-	target_link_libraries(SRB2SDL2 PRIVATE
-		${SDL2_MIXER_LIBRARIES}
-		${GME_LIBRARIES}
-		${OPENMPT_LIBRARIES}
-		${PNG_LIBRARIES}
-		"-lz"
-		${OPENGL_LIBRARIES}
-	)
-	target_link_libraries(SRB2SDL2 PRIVATE CURL::curl)
-	target_link_libraries(SRB2SDL2 PRIVATE libpng::libpng)
+
+	# TODO: not this
+	if(${CMAKE_SYSTEM} MATCHES "Android")
+		target_link_libraries(SRB2SDL2 PRIVATE "${CMAKE_SOURCE_DIR}/thirdparty/SDL2/libs/${CMAKE_ANDROID_ARCH_ABI}/libSDL2.so")
+		target_link_libraries(SRB2SDL2 PRIVATE "${CMAKE_SOURCE_DIR}/thirdparty/SDL2_mixer/libs/${CMAKE_ANDROID_ARCH_ABI}/libSDL2_mixer.so" "${CMAKE_SOURCE_DIR}/thirdparty/SDL2_mixer/libs/${CMAKE_ANDROID_ARCH_ABI}/libmpg123.so")
+		target_link_libraries(SRB2SDL2 PRIVATE
+			${SDL2_MIXER_LIBRARIES}
+			${GME_LIBRARIES}
+			${OPENMPT_LIBRARIES}
+			${PNG_LIBRARIES}
+			"-lz"
+			${OPENGL_LIBRARIES}
+		)
+		target_link_libraries(SRB2SDL2 PRIVATE CURL::curl)
+		target_link_libraries(SRB2SDL2 PRIVATE libpng::libpng)
+	else()
+		target_link_libraries(SRB2SDL2 PRIVATE
+			${SDL2_LIBRARIES}
+			${SDL2_MIXER_LIBRARIES}
+			${GME_LIBRARIES}
+			${OPENMPT_LIBRARIES}
+			${MIXERX_LIBRARIES}
+			${PNG_LIBRARIES}
+			${ZLIB_LIBRARIES}
+			${OPENGL_LIBRARIES}
+			${CURL_LIBRARIES}
+		)
+	endif()
 
 	if(${CMAKE_SYSTEM} MATCHES Linux)
 		target_link_libraries(SRB2SDL2 PRIVATE
