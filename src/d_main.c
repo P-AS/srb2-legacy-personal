@@ -1085,7 +1085,7 @@ static void D_AndroidSetupHome(const char *userhome)
 		next++;
 
     ListAdd(srb2home);
-    ListAdd(I_AppStorageLocation());
+    ListAdd(I_SharedStorageLocation());
 
 #define SetupLocation(loc, path) FindUsableStorageLocation(loc, sizeof(loc), path, homelist, srb2home)
 
@@ -1185,7 +1185,7 @@ void D_SRB2Main(void)
 	{
 		const char *userhome = D_Home(); //Alam: path to home
 #if defined(__ANDROID__)
-        strlcpy(srb2path, I_AppStorageLocation(), sizeof(srb2path));
+		strlcpy(srb2path, I_SharedStorageLocation(), sizeof(srb2path));
 #endif
 
 		if (!userhome)
@@ -1630,7 +1630,7 @@ const char *D_Home(void)
 	const char *userhome = NULL;
 
 #if defined(ANDROID)
-    userhome = I_AppStorageLocation();
+    userhome = I_SharedStorageLocation();
     return userhome;
 #endif
 
