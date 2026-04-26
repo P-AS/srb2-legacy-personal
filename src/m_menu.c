@@ -1563,14 +1563,15 @@ static menuitem_t OP_LegacyCreditsMenu[] = // This barely fits on green resoluti
 	{IT_STRING, NULL, "tatokis", NULL,  NULL, 72},
 	{IT_STRING, NULL, "luigi budd", NULL,  NULL, 82}, // Enhanced server info screen
 	{IT_STRING, NULL, "Lamibe", NULL,  NULL, 92},
-	{IT_STRING, NULL, "Clusterguy!!", NULL,  NULL, 102}, // Software sky barreling
+	{IT_STRING, NULL, "UnitickDelta", NULL,  NULL, 102}, // Software sky barreling
 	{IT_STRING, NULL, "Bewer", NULL,  NULL, 112}, // SRB2Kart text colormaps
 	{IT_STRING, NULL, "alufolie91", NULL,  NULL, 122},
-	{IT_HEADER|IT_STRING, NULL, "Special Thanks:", NULL,  NULL, 132},
-	{IT_STRING, NULL, "Upstream SRB2 Contributors", NULL, NULL, 142},
-	{IT_STRING, NULL, "SRB2 Classic", NULL, NULL, 152},
-	{IT_STRING, NULL, "SRB2Kart-Saturn", NULL, NULL, 162},
-	{IT_STRING, NULL, "SRB2EventZ", NULL, NULL,  172}, // Netgame testing and feature ideas
+	{IT_STRING, NULL, "xdf", NULL,  NULL, 132}, // Marathon mode
+	{IT_HEADER|IT_STRING, NULL, "Special Thanks:", NULL,  NULL, 142},
+	{IT_STRING, NULL, "Upstream SRB2 Contributors", NULL, NULL, 152},
+	{IT_STRING, NULL, "SRB2 Classic", NULL, NULL, 162},
+	{IT_STRING, NULL, "SRB2Kart-Saturn", NULL, NULL, 172},
+	{IT_STRING, NULL, "SRB2EventZ", NULL, NULL,  182}, // Netgame testing and feature ideas
 };
 
 static void M_LegacyCreditsToolTips(void)
