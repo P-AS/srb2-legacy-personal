@@ -15,7 +15,10 @@ if(${SRB2_CONFIG_SDL2_USEMIXER})
 			endif()
 		elseif(${CMAKE_SYSTEM} MATCHES "Android")
 			set(SDL2_MIXER_INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/thirdparty/SDL2_mixer/include/)
-			set(SDL2_MIXER_LIBRARIES "-L${CMAKE_SOURCE_DIR}/thirdparty/SDL2_mixer/libs/${CMAKE_ANDROID_ARCH_ABI}/ -lSDL2_mixer")
+			set(SDL2_MIXER_LIBRARIES
+				"${CMAKE_SOURCE_DIR}/thirdparty/SDL2_mixer/libs/${CMAKE_ANDROID_ARCH_ABI}/libSDL2_mixer.so"
+				"${CMAKE_SOURCE_DIR}/thirdparty/SDL2_mixer/libs/${CMAKE_ANDROID_ARCH_ABI}/libmpg123.so"
+			)
 		endif()
 	else()
 		find_package(SDL2_mixer)
@@ -52,7 +55,7 @@ if(${SRB2_CONFIG_USE_INTERNAL_LIBRARIES})
 		endif()
 	elseif(${CMAKE_SYSTEM} MATCHES "Android")
 		set(SDL2_INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/thirdparty/SDL2/include)
-		set(SDL2_LIBRARIES "-L${CMAKE_SOURCE_DIR}/thirdparty/SDL2_mixer/libs/${CMAKE_ANDROID_ARCH_ABI}/ -lSDL2")
+		set(SDL2_LIBRARIES "${CMAKE_SOURCE_DIR}/thirdparty/SDL2/libs/${CMAKE_ANDROID_ARCH_ABI}/libSDL2.so")
 	endif()
 else()
 	find_package(SDL2 CONFIG REQUIRED)
@@ -104,33 +107,17 @@ if(${SDL2_FOUND})
 		)
 	endif()
 
-	# TODO: not this
-	if(${CMAKE_SYSTEM} MATCHES "Android")
-		target_link_libraries(SRB2SDL2 PRIVATE "${CMAKE_SOURCE_DIR}/thirdparty/SDL2/libs/${CMAKE_ANDROID_ARCH_ABI}/libSDL2.so")
-		target_link_libraries(SRB2SDL2 PRIVATE "${CMAKE_SOURCE_DIR}/thirdparty/SDL2_mixer/libs/${CMAKE_ANDROID_ARCH_ABI}/libSDL2_mixer.so" "${CMAKE_SOURCE_DIR}/thirdparty/SDL2_mixer/libs/${CMAKE_ANDROID_ARCH_ABI}/libmpg123.so")
-		target_link_libraries(SRB2SDL2 PRIVATE
-			${SDL2_MIXER_LIBRARIES}
-			${GME_LIBRARIES}
-			${OPENMPT_LIBRARIES}
-			${PNG_LIBRARIES}
-			"-lz"
-			${OPENGL_LIBRARIES}
-		)
-		target_link_libraries(SRB2SDL2 PRIVATE CURL::curl)
-		target_link_libraries(SRB2SDL2 PRIVATE libpng::libpng)
-	else()
-		target_link_libraries(SRB2SDL2 PRIVATE
-			${SDL2_LIBRARIES}
-			${SDL2_MIXER_LIBRARIES}
-			${GME_LIBRARIES}
-			${OPENMPT_LIBRARIES}
-			${MIXERX_LIBRARIES}
-			${PNG_LIBRARIES}
-			${ZLIB_LIBRARIES}
-			${OPENGL_LIBRARIES}
-			${CURL_LIBRARIES}
-		)
-	endif()
+	target_link_libraries(SRB2SDL2 PRIVATE
+		${SDL2_LIBRARIES}
+		${SDL2_MIXER_LIBRARIES}
+		${GME_LIBRARIES}
+		${OPENMPT_LIBRARIES}
+		${MIXERX_LIBRARIES}
+		${PNG_LIBRARIES}
+		${ZLIB_LIBRARIES}
+		${OPENGL_LIBRARIES}
+		${CURL_LIBRARIES}
+	)
 
 	if(${CMAKE_SYSTEM} MATCHES Linux)
 		target_link_libraries(SRB2SDL2 PRIVATE
