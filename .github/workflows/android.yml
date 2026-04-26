@@ -2,9 +2,9 @@ name: Android
 
 on:
   push:
-    branches: [ android ]
+    branches: [ "next", "master", "ci", "android" ]
   pull_request:
-    branches: [ android ]
+    branches: [ "next", "master", "android" ]
 
 jobs:
   build:

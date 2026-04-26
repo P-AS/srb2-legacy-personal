@@ -1,6 +1,6 @@
 # SRB2 Legacy Android Port
 
-Based off [bitten2up/Kart-Public/android](https://github.com/bitten2up/Kart-Public/tree/android). This port is currently in an experimental state.
+Based off [bitten2up/Kart-Public/android](https://github.com/bitten2up/Kart-Public/tree/android). The port is in a stable state with some limitations.
 
 ## Status
 
@@ -23,12 +23,11 @@ Based off [bitten2up/Kart-Public/android](https://github.com/bitten2up/Kart-Publ
 - [x] Addon support
 - [x] Native Resolutions
 - [x] Full digital music support (libopenmpt, libgme)
+- [x] MIDI music support
 - [x] Correct app icon
 - [x] Non-hardcoded CMake
      - Paths to libraries are hardcoded on Android, but non-Android builds are untouched.
 - [x] SAF support
 - [ ] Prepackaged assets
 - [x] Distributable build
-- [ ] Merge into next
-
-Note: this is an ideal list. Don't expect everything listed to actually be done.
+- [x] Merge into next
