@@ -2711,7 +2711,7 @@ void I_ShutdownSystem(void)
 {
 	INT32 c;
 
-#ifndef NEWSIGNALHANDLER
+#ifdef NEWSIGNALHANDLER
 	if (M_CheckParm("-nofork"))
 #endif
 		I_ShutdownConsole();
