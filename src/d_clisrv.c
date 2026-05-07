@@ -546,6 +546,17 @@ static void GetPackets(void);
 
 static cl_mode_t cl_mode = CL_SEARCHING;
 
+// simply checks for any of the main wads
+static boolean CL_CheckMainWads(const char *file_name)
+{
+	if ((strcmp(file_name, "srb2.srb") && strcmp(file_name, "srb2.wad") && strcmp(file_name, "zones.dta")
+			&& strcmp(file_name, "player.dta") && strcmp(file_name, "rings.dta") && strcmp(file_name, "patch.dta")
+			&& strcmp(file_name, "music.dta")
+		))
+		return false;
+	else
+		return true;
+}
 
 static void CL_DrawPlayerList(void)
 {
@@ -612,14 +623,7 @@ static void CL_DrawAddonList(void)
 		fileneeded_t addon_file = fileneeded[i];
 		strncpy(file_name, addon_file.filename, MAX_WADPATH);
 
-		if (!(strcmp(file_name, "srb2.srb")
-			&& strcmp(file_name, "srb2.wad")
-			&& strcmp(file_name, "zones.dta")
-			&& strcmp(file_name, "player.dta")
-			&& strcmp(file_name, "rings.dta")
-			&& strcmp(file_name, "patch.dta")
-			&& strcmp(file_name, "music.dta")
-			))
+		if (CL_CheckMainWads(file_name))
 			continue;
 
 		if ((UINT8)(strlen(file_name) + 1) > maxcharlen)
@@ -650,14 +654,7 @@ static void CL_DrawAddonList(void)
 		fileneeded_t addon_file = fileneeded[j];
 		strncpy(file_name, addon_file.filename, MAX_WADPATH);
 
-		if (!(strcmp(file_name, "srb2.srb")
-			&& strcmp(file_name, "srb2.wad")
-			&& strcmp(file_name, "zones.dta")
-			&& strcmp(file_name, "player.dta")
-			&& strcmp(file_name, "rings.dta")
-			&& strcmp(file_name, "patch.dta")
-			&& strcmp(file_name, "music.dta")
-			))
+		if (CL_CheckMainWads(file_name))
 			continue;
 
 		totalsize += fileneeded[j].totalsize;
@@ -678,14 +675,7 @@ static void CL_DrawAddonList(void)
 		fileneeded_t addon_file = fileneeded[i];
 		strncpy(file_name, addon_file.filename, MAX_WADPATH);
 
-		if (!(strcmp(file_name, "srb2.srb")
-			&& strcmp(file_name, "srb2.wad")
-			&& strcmp(file_name, "zones.dta")
-			&& strcmp(file_name, "player.dta")
-			&& strcmp(file_name, "rings.dta")
-			&& strcmp(file_name, "patch.dta")
-			&& strcmp(file_name, "music.dta")
-			))
+		if (CL_CheckMainWads(file_name))
 			realfileneedednum--;
 	}
 
@@ -789,14 +779,7 @@ static inline void CL_DrawConnectionStatus(void)
 				fileneeded_t addon_file = fileneeded[i];
 				strncpy(file_name, addon_file.filename, MAX_WADPATH);
 
-				if (!(strcmp(file_name, "srb2.srb")
-					&& strcmp(file_name, "srb2.wad")
-					&& strcmp(file_name, "zones.dta")
-					&& strcmp(file_name, "player.dta")
-					&& strcmp(file_name, "rings.dta")
-					&& strcmp(file_name, "patch.dta")
-					&& strcmp(file_name, "music.dta")
-					))
+				if (CL_CheckMainWads(file_name))
 					realfileneedednum--;
 			}
 
