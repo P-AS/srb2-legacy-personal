@@ -377,6 +377,17 @@ char *sizeu3(size_t num);
 char *sizeu4(size_t num);
 char *sizeu5(size_t num);
 
+#if defined(__ANDROID__)
+#include "android-jni/ndk_strings.h"
+#define M_sprintf Android_sprintf
+#define M_snprintf Android_snprintf
+#define M_vsnprintf Android_vsnprintf
+#else
+#define M_sprintf sprintf
+#define M_snprintf snprintf
+#define M_vsnprintf vsnprintf
+#endif
+
 // d_main.c
 extern int    VERSION;
 extern int SUBVERSION;
@@ -527,5 +538,10 @@ extern const char *compdate, *comptime, *comprevision, *compbranch, *compnote;
 #define GL_SHADERS
 
 // Here once lied the corpse of ALAM_LIGHTING
+
+/// Android Port: Native Resolution support
+#if defined(__ANDROID__)
+#define NATIVESCREENRES
+#endif
 
 #endif // __DOOMDEF__
