@@ -70,7 +70,7 @@ modules:
     build-commands:
       - make distclean
       - make LINUX64=1 -j $FLATPAK_BUILDER_N_JOBS
-      - install -D -m 755 -t $FLATPAK_DEST/bin bin/lsdl2srb2legacy
+      - install -D -m 755 -t $FLATPAK_DEST/bin bin/lsdl3srb2legacy
       - install -D -m 644 srb2.png $FLATPAK_DEST/share/icons/hicolor/256x256/apps/$FLATPAK_ID.png
       - install -D -m 755 srb2legacy.sh $FLATPAK_DEST/bin/srb2legacy
       - install -D -m 644 srb2legacy.desktop $FLATPAK_DEST/share/applications/$FLATPAK_ID.desktop
@@ -82,7 +82,7 @@ modules:
       - type: script
         commands:
           - export SRB2LEGACYWADDIR=/app/assets
-          - lsdl2srb2legacy "$@"
+          - lsdl3srb2legacy "$@"
         dest-filename: srb2legacy.sh
 
   - name: srb2assets

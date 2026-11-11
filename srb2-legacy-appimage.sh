@@ -39,7 +39,7 @@ else
 fi
 
 # Copy binary to AppDir
-install -D bin/lsdl2srb2legacy AppDir/usr/bin/srb2legacy
+install -D bin/lsdl3srb2legacy AppDir/usr/bin/srb2legacy
 
 # Copy icon
 cp srb2.png srb2legacy.png
