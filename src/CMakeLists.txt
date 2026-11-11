@@ -52,7 +52,7 @@ endif()
 ### use internal libraries?
 if(${CMAKE_SYSTEM} MATCHES "Windows" OR ${CMAKE_SYSTEM} MATCHES "Android" OR ${CMAKE_SYSTEM} MATCHES "iOS") ### set on Windows, Android, and iOS only
 	set(SRB2_CONFIG_USE_INTERNAL_LIBRARIES OFF CACHE BOOL
-		"Use SRB2's internal copies of required dependencies (SDL2, PNG, zlib, GME, OpenMPT).")
+		"Use SRB2's internal copies of required dependencies (SDL3, PNG, zlib, GME, OpenMPT).")
 endif()
 
 if(${CMAKE_SYSTEM} MATCHES "Android")

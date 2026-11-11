@@ -8,9 +8,9 @@ file(COPY
 
 target_compile_definitions(SRB2SDL2 PRIVATE -DHAVE_MIXER -DSOUND=SOUND_MIXER)
 target_compile_definitions(SRB2SDL2 PRIVATE -DDIRECTFULLSCREEN -DHAVE_SDL -DHAVE_PNG)
+# SDL3 is an Emscripten port; SDL3_mixer is linked from libs/SDL3_mixer (see src/sdl/CMakeLists.txt)
 target_link_options(SRB2SDL2 PRIVATE
-	--use-port=sdl2
-	--use-port=sdl2_mixer
+	--use-port=sdl3
 	--use-port=zlib
 	--use-port=libpng
 	-lidbfs.js
@@ -29,4 +29,4 @@ target_link_options(SRB2SDL2 PRIVATE
 	-sFORCE_FILESYSTEM=1
 	-sDEFAULT_TO_CXX
 )
-target_compile_options(SRB2SDL2 PRIVATE --use-port=sdl2 --use-port=sdl2_mixer --use-port=zlib --use-port=libpng)
+target_compile_options(SRB2SDL2 PRIVATE --use-port=sdl3 --use-port=zlib --use-port=libpng)

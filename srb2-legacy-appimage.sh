@@ -1,7 +1,8 @@
 #!/bin/bash
 # srb2-legacy AppImage build script
 # Rewrite of https://gist.github.com/mazmazz/012f22012c1aea51d7573f0592cfe73a
-# Dependencies: sudo apt install make git git-lfs gcc libsdl2-mixer-dev libpng-dev libcurl4-openssl-dev libgme-dev libopenmpt-dev libfuse2 file
+# Dependencies: sudo apt install make git git-lfs gcc pkg-config libpng-dev libcurl4-openssl-dev libgme-dev libopenmpt-dev libfuse2 file
+# as well as SDL3 and SDL3_mixer (libsdl3-dev and libsdl3-mixer-dev where packaged, otherwise built from source)
 
 for args in "$@"; do
 	case "$args" in

@@ -8,6 +8,9 @@ on:
 
 env:
   CC: gcc
+  # Not every Ubuntu release packages SDL3 and SDL3_mixer, so they're built from source
+  SDL3_VERSION: 3.4.0
+  SDL3_MIXER_VERSION: 3.2.4
 
 jobs:
   build:
@@ -29,7 +32,24 @@ jobs:
     - name: Install dependencies
       run: |
        sudo apt-get update
-       sudo apt install -y libsdl2-mixer-dev libpng-dev libcurl4-openssl-dev libgme-dev libminiupnpc-dev libopenmpt-dev
+       sudo apt install -y libpng-dev libcurl4-openssl-dev libgme-dev libminiupnpc-dev libopenmpt-dev
+       # SDL3 (video, audio and input backends) and SDL3_mixer (audio formats) build dependencies
+       sudo apt install -y cmake ninja-build pkg-config \
+         libasound2-dev libpulse-dev libpipewire-0.3-dev libjack-dev libsndio-dev \
+         libx11-dev libxext-dev libxrandr-dev libxcursor-dev libxfixes-dev libxi-dev libxss-dev libxtst-dev \
+         libxkbcommon-dev libwayland-dev libdecor-0-dev libdrm-dev libgbm-dev \
+         libgl1-mesa-dev libgles2-mesa-dev libegl1-mesa-dev libdbus-1-dev libibus-1.0-dev libudev-dev \
+         libvorbis-dev libopusfile-dev libflac-dev libmpg123-dev libxmp-dev libfluidsynth-dev
+
+    - name: Build SDL3 and SDL3_mixer
+      run: |
+       curl -sSfL https://github.com/libsdl-org/SDL/releases/download/release-$SDL3_VERSION/SDL3-$SDL3_VERSION.tar.gz | tar -xz
+       cmake -S SDL3-$SDL3_VERSION -B SDL3-build -G Ninja -DCMAKE_BUILD_TYPE=Release -DSDL_TESTS=OFF -DSDL_EXAMPLES=OFF
+       sudo cmake --build SDL3-build --target install
+       curl -sSfL https://github.com/libsdl-org/SDL_mixer/releases/download/release-$SDL3_MIXER_VERSION/SDL3_mixer-$SDL3_MIXER_VERSION.tar.gz | tar -xz
+       cmake -S SDL3_mixer-$SDL3_MIXER_VERSION -B SDL3_mixer-build -G Ninja -DCMAKE_BUILD_TYPE=Release -DSDLMIXER_TESTS=OFF -DSDLMIXER_EXAMPLES=OFF
+       sudo cmake --build SDL3_mixer-build --target install
+       sudo ldconfig
 
     - name: Build SRB2 Legacy
       run: make -C src/ --keep-going -j$(nproc) LINUX64=1
