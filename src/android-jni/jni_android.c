@@ -107,7 +107,7 @@ static JNIEnv *JNI_GetEnv(void)
 #define JNI_CONTEXT \
 { \
 	method = (*env)->GetStaticMethodID(env, activityClass, \
-			"getContext", "()Landroid/content/Context;"); \
+			"getContext", "()Landroid/app/Activity;"); \
 	context = (*env)->CallStaticObjectMethod(env, activityClass, method); \
 }
 
