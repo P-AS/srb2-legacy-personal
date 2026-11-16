@@ -26,8 +26,12 @@ if(${SRB2_CONFIG_USEMIXER})
 		elseif(${CMAKE_SYSTEM} MATCHES "iOS")
 			set(SDL3_MIXER_INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/thirdparty/SDL3_mixer/include)
 			set(SDL3_MIXER_ROOT "${CMAKE_SOURCE_DIR}/thirdparty/SDL3_mixer/iOS")
+			# SDL3_mixer is a static library; its vendored codecs are separate static libraries
 			set(SDL3_MIXER_LIBRARIES
 				"${SDL3_MIXER_ROOT}/SDL3_mixer.xcframework"
+				"${SDL3_MIXER_ROOT}/vorbisfile.xcframework"
+				"${SDL3_MIXER_ROOT}/vorbis.xcframework"
+				"${SDL3_MIXER_ROOT}/ogg.xcframework"
 			)
 		endif()
 	elseif(${CMAKE_SYSTEM} MATCHES "Emscripten")
@@ -163,6 +167,7 @@ if(${SDL3_FOUND})
 			UIKit Foundation CoreFoundation CoreGraphics QuartzCore
 			CoreAudio AudioToolbox AVFoundation CoreMotion
 			GameController CoreHaptics CoreBluetooth Metal OpenGLES
+			CoreMedia CoreVideo # SDL3 camera and Metal renderer
 		)
 		foreach(fwname ${SRB2_IOS_FRAMEWORKS})
 			find_library(SRB2_IOS_FRAMEWORK_${fwname} ${fwname})
