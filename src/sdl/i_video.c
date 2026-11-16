@@ -1291,8 +1291,8 @@ void VID_CheckRenderer(void)
 		rendermode = setrenderneeded;
 		rendererchanged = true;
 
-#if defined(__APPLE__) && defined(HWRENDER)
-		// macOS needs the window and rendering context to be remade on every renderer switch, or else the video will freeze.
+#if (defined(__APPLE__) || defined(_WIN32)) && defined(HWRENDER)
+		// macOS and Windows need the window and rendering context to be remade on every renderer switch, or else the video will freeze.
 		Impl_DestroyWindow();
 #endif
 
@@ -1309,7 +1309,7 @@ void VID_CheckRenderer(void)
 				// Loaded successfully!
 				if (vid.glstate == VID_GL_LIBRARY_LOADED)
 				{
-#ifndef __APPLE__
+#if !defined(__APPLE__) && !defined(_WIN32)
 					Impl_DestroyWindow();
 
 					// Create a new window.
