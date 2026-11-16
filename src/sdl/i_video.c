@@ -1464,6 +1464,12 @@ static bool Impl_CreateWindow(bool fullscreen)
 		// Some GPU drivers may give us a 16-bit depth buffer since the
 		// default value for SDL_GL_DEPTH_SIZE is 16.
 		SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+
+		// SDL3 asks for an 8-bit alpha channel by default (SDL2 asked for none).
+		// The renderer never uses destination alpha, and some platforms have no
+		// window pixel format with one (Wine on X11 fails with "No matching GL
+		// pixel format available"), so ask for none like SDL2 did.
+		SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 0);
 	}
 #endif
 
