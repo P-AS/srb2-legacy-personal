@@ -17,7 +17,7 @@ jobs:
     strategy:
       matrix:
         arch:
-          - runner: ubuntu-26.04
+          - runner: ubuntu-latest
             name: x86_64
           - runner: ubuntu-26.04-arm
             name: aarch64
