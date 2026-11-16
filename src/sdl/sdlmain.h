@@ -26,7 +26,7 @@ extern bool framebuffer;
 #include "../i_gamepad.h"
 
 // SDL stub macro
-#define SDL2STUB() CONS_Printf("SDL: stubbed: %s:%d\n", __func__, __LINE__)
+#define SDLSTUB() CONS_Printf("SDL: stubbed: %s:%d\n", __func__, __LINE__)
 
 // SDL info about all controllers
 typedef struct

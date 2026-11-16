@@ -127,7 +127,7 @@ static       bool    wrapmouseok = false;
 #define HalfWarpMouse(x,y) if (wrapmouseok) SDL_WarpMouseInWindow(window, (float)(x/2),(float)(y/2))
 static       bool    videoblitok = false;
 static       bool    exposevideo = false;
-static       bool    usesdl2soft = false;
+static       bool    usesoftrenderer = false;
 static       bool    borderlesswindow = false;
 
 // SDL window/renderer vars
@@ -408,7 +408,7 @@ static void SurfaceInfo(const SDL_Surface *infoSurface, const char *SurfaceText)
 static void VID_Command_Info_f (void)
 {
 #if 0
-	SDL2STUB();
+	SDLSTUB();
 #else
 #if 0
 	const SDL_VideoInfo *videoInfo;
@@ -1227,8 +1227,8 @@ static bool Impl_CreateContext(void)
 	{
 		if (!renderer)
 		{
-			renderer = SDL_CreateRenderer(window, usesdl2soft ? SDL_SOFTWARE_RENDERER : NULL);
-			if (renderer && !usesdl2soft)
+			renderer = SDL_CreateRenderer(window, usesoftrenderer ? SDL_SOFTWARE_RENDERER : NULL);
+			if (renderer && !usesoftrenderer)
 				SDL_SetRenderVSync(renderer, cv_vidwait.value ? 1 : 0);
 		}
 		if (renderer == NULL)
@@ -1510,7 +1510,7 @@ static void Impl_SetWindowIcon(void)
 	{
 		return;
 	}
-	//SDL2STUB(); // Monster Iestyn: why is this stubbed?
+	//SDLSTUB(); // Monster Iestyn: why is this stubbed?
 	SDL_SetWindowIcon(window, icoSurface);
 }
 
@@ -1580,7 +1580,7 @@ void I_StartupGraphics(void)
 #endif
 		chosenrendermode = rendermode = render_soft;
 
-	usesdl2soft = M_CheckParm("-softblit");
+	usesoftrenderer = M_CheckParm("-softblit");
 	borderlesswindow = M_CheckParm("-borderless");
 
 	//SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY>>1,SDL_DEFAULT_REPEAT_INTERVAL<<2);
@@ -1752,7 +1752,7 @@ UINT32 I_GetRefreshRate(void)
 
 static void Impl_SetVsync(void)
 {
-	if (renderer && !usesdl2soft)
+	if (renderer && !usesoftrenderer)
 		SDL_SetRenderVSync(renderer, cv_vidwait.value ? 1 : 0);
 }
 
